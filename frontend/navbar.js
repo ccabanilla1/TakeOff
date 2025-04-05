@@ -52,12 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
 	navbar.innerHTML = `
     <nav class="navbar">
       <div class="logo">
-        <a href="${pathPrefix}home.html">
+        <a href="${pathPrefix}index.html">
           <img src="${pathPrefix}assets/logo.png" alt="Logo" />
         </a>
       </div>
       <ul class="nav-links">
-        <li><a href="${pathPrefix}home.html">Home</a></li>
+        <li><a href="${pathPrefix}index.html">Home</a></li>
         <li><a href="${pathPrefix}about.html">About Us</a></li>
         <li><a href="${pathPrefix}explore.html">Explore</a></li>
       </ul>
