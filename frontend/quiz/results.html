@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - Your Trip</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="../css/styles.css" />
+		<script src="../navbar.js" defer></script>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="content">
+				<div id="navbar"></div>
+
+				<div class="itinerary-header">
+					<div>
+						<h1 id="trip-destination">Planning Your Trip...</h1>
+						<p id="trip-dates"></p>
+						<p id="trip-details"></p>
+					</div>
+					<button id="add-event-btn" class="add-event-btn">+ Add Event</button>
+				</div>
+
+				<div id="loading-container">
+					<div class="pixel-loader"></div>
+					<p class="loading-text">Generating your personalized itinerary...</p>
+				</div>
+
+				<div
+					class="calendar-preview"
+					id="calendar-preview"
+					style="display: none"
+				>
+					<!-- Days will be dynamically populated -->
+				</div>
+
+				<!-- Event Modal -->
+				<div id="event-modal" class="modal">
+					<div class="modal-content">
+						<h2 id="modal-title">Add New Event</h2>
+						<form id="event-form" class="modal-form">
+							<input
+								type="text"
+								id="event-title"
+								placeholder="Event Title"
+								required
+							/>
+							<select id="event-day" required>
+								<option value="">Select Day</option>
+								<!-- Days will be dynamically populated -->
+							</select>
+							<input type="time" id="event-time" required />
+							<textarea
+								id="event-description"
+								placeholder="Event Description"
+							></textarea>
+							<div class="modal-actions">
+								<button type="submit" id="save-event-btn">Save Event</button>
+								<button type="button" id="cancel-event-btn">Cancel</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			class TripItineraryPlanner {
+				constructor() {
+					// Initialize with empty trip events
+					this.tripEvents = [];
+
+					// Get stored quiz data
+					this.quizData = this.getQuizData();
+
+					// Initialize event listeners
+					this.initEventListeners();
+
+					// Display initial trip info
+					this.displayTripInfo();
+
+					// Generate AI itinerary
+					this.generateAIItinerary();
+				}
+
+				getQuizData() {
+					return {
+						destination:
+							localStorage.getItem("selectedDestination") || "Barcelona",
+						timeframe:
+							localStorage.getItem("selectedTimeframe") || "June 20-23, 2024",
+						companion:
+							localStorage.getItem("selectedCompanionText") || "Solo travel",
+						styles:
+							localStorage.getItem("selectedStylesText") || "Adventure Travel",
+						budget:
+							localStorage.getItem("selectedBudgetText") ||
+							"Mid-Range ($$-$$$)",
+						duration: localStorage.getItem("selectedDurationText") || "4 days",
+					};
+				}
+
+				displayTripInfo() {
+					document.getElementById(
+						"trip-destination"
+					).textContent = `Your Trip to ${this.quizData.destination}`;
+					document.getElementById("trip-dates").textContent =
+						this.quizData.timeframe;
+					document.getElementById(
+						"trip-details"
+					).textContent = `${this.quizData.companion} • ${this.quizData.styles} • ${this.quizData.budget}`;
+				}
+
+				async generateAIItinerary() {
+					try {
+						// Show loading state
+						document.getElementById("loading-container").style.display = "flex";
+						document.getElementById("calendar-preview").style.display = "none";
+
+						// Make API call to your backend
+						const response = await fetch(
+							"http://localhost:3000/api/generate-itinerary",
+							{
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify({
+									destination: this.quizData.destination,
+									timeframe: this.quizData.timeframe,
+									companion: this.quizData.companion,
+									styles: this.quizData.styles,
+									budget: this.quizData.budget,
+									duration: this.quizData.duration,
+								}),
+							}
+						);
+
+						if (!response.ok) {
+							throw new Error("Failed to generate itinerary");
+						}
+
+						const data = await response.json();
+						this.tripEvents = data.days;
+
+						// Hide loading and show itinerary
+						document.getElementById("loading-container").style.display = "none";
+						document.getElementById("calendar-preview").style.display = "grid";
+
+						// Render the calendar
+						this.renderCalendar();
+					} catch (error) {
+						console.error("Error generating itinerary:", error);
+						alert(
+							"There was an error generating your itinerary. Please try again."
+						);
+
+						// Show mock data as fallback
+						this.generateMockItinerary();
+					}
+				}
+				generateMockItinerary() {
+					// Create mock data based on quiz responses
+					const isAdventure = this.quizData.styles.includes("Adventure");
+					const isCultural = this.quizData.styles.includes("Cultural");
+					const isLuxury = this.quizData.styles.includes("Luxury");
+					const duration =
+						parseInt(this.quizData.duration.match(/\d+/)[0]) || 4;
+
+					// Create date range for the trip
+					const dates = [];
+					const startDate = new Date();
+					startDate.setDate(startDate.getDate() + 30); // Mock start date one month from now
+
+					for (let i = 0; i < duration; i++) {
+						const currentDate = new Date(startDate);
+						currentDate.setDate(startDate.getDate() + i);
+						dates.push(
+							currentDate.toLocaleDateString("en-US", {
+								month: "long",
+								day: "numeric",
+								year: "numeric",
+							})
+						);
+					}
+
+					// Populate day selector for events
+					const daySelect = document.getElementById("event-day");
+					daySelect.innerHTML = '<option value="">Select Day</option>';
+					dates.forEach((date, index) => {
+						const option = document.createElement("option");
+						option.value = index;
+						option.textContent = date;
+						daySelect.appendChild(option);
+					});
+
+					// Generate activities based on preferences
+					this.tripEvents = [];
+
+					// First day always has arrival
+					this.tripEvents.push({
+						day: 0,
+						events: [
+							{
+								id: this.generateId(),
+								time: "09:00",
+								title: `Arrival in ${this.quizData.destination}`,
+								description: `Check in to your ${
+									isLuxury ? "luxury" : "comfortable"
+								} accommodation`,
+							},
+							{
+								id: this.generateId(),
+								time: "13:00",
+								title: `${this.quizData.destination} Orientation`,
+								description: "Get familiar with the local area and grab lunch",
+							},
+							{
+								id: this.generateId(),
+								time: "16:00",
+								title: isAdventure ? "Sunset Kayaking" : "City Walking Tour",
+								description:
+									"Start your trip with a memorable first-day experience",
+							},
+						],
+					});
+
+					// Middle days with activities based on preferences
+					for (let i = 1; i < duration - 1; i++) {
+						const dayEvents = [];
+
+						// Morning activity
+						dayEvents.push({
+							id: this.generateId(),
+							time: "09:00",
+							title: isCultural
+								? "Cultural Heritage Tour"
+								: "Breakfast at Local Cafe",
+							description: isCultural
+								? "Explore local museums and historic sites"
+								: "Start your day with authentic local cuisine",
+						});
+
+						// Afternoon activity
+						dayEvents.push({
+							id: this.generateId(),
+							time: "13:00",
+							title: isAdventure
+								? "Mountain Hiking"
+								: "Shopping District Visit",
+							description: isAdventure
+								? "Experience the natural beauty of the region"
+								: "Explore local markets and boutiques",
+						});
+
+						// Evening activity
+						dayEvents.push({
+							id: this.generateId(),
+							time: "19:00",
+							title: isLuxury ? "Fine Dining Experience" : "Local Food Tour",
+							description: "Enjoy the culinary delights of the region",
+						});
+
+						this.tripEvents.push({
+							day: i,
+							events: dayEvents,
+						});
+					}
+
+					// Last day always has departure
+					this.tripEvents.push({
+						day: duration - 1,
+						events: [
+							{
+								id: this.generateId(),
+								time: "10:00",
+								title: isAdventure
+									? "Last Adventure Activity"
+									: "Souvenir Shopping",
+								description: "Make the most of your final day",
+							},
+							{
+								id: this.generateId(),
+								time: "15:00",
+								title: "Departure Preparation",
+								description: "Pack up and prepare for departure",
+							},
+							{
+								id: this.generateId(),
+								time: "18:00",
+								title: `Departure from ${this.quizData.destination}`,
+								description: "Safe travels home!",
+							},
+						],
+					});
+
+					// Render the calendar
+					this.renderCalendar();
+				}
+
+				generateId() {
+					return (
+						Date.now().toString() + Math.random().toString(36).substr(2, 9)
+					);
+				}
+
+				initEventListeners() {
+					// Add Event Button
+					document
+						.getElementById("add-event-btn")
+						.addEventListener("click", () => this.openEventModal());
+
+					// Cancel Event Modal
+					document
+						.getElementById("cancel-event-btn")
+						.addEventListener("click", () => this.closeEventModal());
+
+					// Save Event Form
+					document
+						.getElementById("event-form")
+						.addEventListener("submit", (e) => {
+							e.preventDefault();
+							this.saveEvent();
+						});
+				}
+
+				openEventModal(eventToEdit = null) {
+					const modal = document.getElementById("event-modal");
+					const modalTitle = document.getElementById("modal-title");
+					const saveButton = document.getElementById("save-event-btn");
+
+					// Reset form
+					document.getElementById("event-form").reset();
+
+					if (eventToEdit) {
+						// Editing existing event
+						modalTitle.textContent = "Edit Event";
+						document.getElementById("event-title").value = eventToEdit.title;
+						document.getElementById("event-day").value = eventToEdit.dayIndex;
+						document.getElementById("event-time").value = eventToEdit.time;
+						document.getElementById("event-description").value =
+							eventToEdit.description;
+
+						// Store the event ID for update
+						this.editingEventId = eventToEdit.id;
+					} else {
+						// Adding new event
+						modalTitle.textContent = "Add New Event";
+						this.editingEventId = null;
+					}
+
+					modal.style.display = "flex";
+				}
+
+				closeEventModal() {
+					document.getElementById("event-modal").style.display = "none";
+				}
+
+				saveEvent() {
+					const title = document.getElementById("event-title").value;
+					const day = document.getElementById("event-day").value;
+					const time = document.getElementById("event-time").value;
+					const description =
+						document.getElementById("event-description").value;
+
+					const newEvent = {
+						id: this.editingEventId || this.generateId(),
+						time,
+						title,
+						description,
+					};
+
+					// Find or create the day in tripEvents
+					let dayEvents = this.tripEvents.find((d) => d.day === parseInt(day));
+					if (!dayEvents) {
+						dayEvents = { day: parseInt(day), events: [] };
+						this.tripEvents.push(dayEvents);
+					}
+
+					// Update or add event
+					if (this.editingEventId) {
+						const index = dayEvents.events.findIndex(
+							(e) => e.id === this.editingEventId
+						);
+						if (index !== -1) {
+							dayEvents.events[index] = newEvent;
+						}
+					} else {
+						dayEvents.events.push(newEvent);
+					}
+
+					// Re-render calendar and close modal
+					this.renderCalendar();
+					this.closeEventModal();
+				}
+
+				renderCalendar() {
+					const calendarPreview = document.getElementById("calendar-preview");
+					calendarPreview.innerHTML = ""; // Clear existing content
+
+					// Sort trip events by day
+					this.tripEvents.sort((a, b) => a.day - b.day);
+
+					this.tripEvents.forEach((dayData, dayIndex) => {
+						const dayColumn = document.createElement("div");
+						dayColumn.classList.add("day-column");
+
+						// Create day header
+						const dateHeader = document.createElement("div");
+						dateHeader.classList.add("day-header");
+						const dates = [];
+						const startDate = new Date();
+						startDate.setDate(startDate.getDate() + 30);
+
+						for (let i = 0; i < this.tripEvents.length; i++) {
+							const currentDate = new Date(startDate);
+							currentDate.setDate(startDate.getDate() + i);
+							dates.push(
+								currentDate.toLocaleDateString("en-US", {
+									month: "long",
+									day: "numeric",
+									year: "numeric",
+								})
+							);
+						}
+
+						dateHeader.textContent = dates[dayData.day];
+						dayColumn.appendChild(dateHeader);
+
+						// Sort events by time
+						dayData.events.sort((a, b) => a.time.localeCompare(b.time));
+
+						// Render events for this day
+						dayData.events.forEach((event) => {
+							const eventCard = document.createElement("div");
+							eventCard.classList.add("event-card");
+							eventCard.innerHTML = `
+                            <div class="event-time">${event.time}</div>
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-description">${event.description}</div>
+                            <div class="event-actions">
+                                <button class="edit-event-btn" data-id="${event.id}">Edit</button>
+                                <button class="delete-event-btn" data-id="${event.id}">Delete</button>
+                            </div>
+                        `;
+
+							// Add event listeners for edit and delete
+							const editBtn = eventCard.querySelector(".edit-event-btn");
+							editBtn.addEventListener("click", () =>
+								this.editEvent(event, dayIndex)
+							);
+
+							const deleteBtn = eventCard.querySelector(".delete-event-btn");
+							deleteBtn.addEventListener("click", () =>
+								this.deleteEvent(event, dayIndex)
+							);
+
+							dayColumn.appendChild(eventCard);
+						});
+
+						calendarPreview.appendChild(dayColumn);
+					});
+				}
+
+				editEvent(event, dayIndex) {
+					this.openEventModal({
+						...event,
+						dayIndex: dayIndex,
+					});
+				}
+
+				deleteEvent(eventToDelete, dayIndex) {
+					// Remove the event from the corresponding day
+					const dayEvents = this.tripEvents[dayIndex];
+					dayEvents.events = dayEvents.events.filter(
+						(event) => event.id !== eventToDelete.id
+					);
+
+					// Re-render calendar
+					this.renderCalendar();
+				}
+			}
+
+			// Initialize the planner when the page loads
+			document.addEventListener("DOMContentLoaded", () => {
+				window.itineraryPlanner = new TripItineraryPlanner();
+			});
+		</script>
+		<style>
+			.itinerary-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+				margin-left: 20px;
+				font-size: small;
+			}
+
+			.calendar-preview {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				gap: 15px;
+				background-color: var(--background-light);
+				padding: 20px;
+				border-radius: 8px;
+			}
+
+			#loading-container {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 100px 0;
+			}
+
+			.pixel-loader {
+				width: 40px;
+				height: 40px;
+				background-color: #a090ff;
+				margin-bottom: 20px;
+				animation: pixelPulse 1.5s infinite ease-in-out;
+			}
+
+			@keyframes pixelPulse {
+				0% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.5);
+				}
+				100% {
+					transform: scale(1);
+				}
+			}
+
+			.loading-text {
+				font-family: "Press Start 2P", cursive;
+				color: #a090ff;
+				font-size: 16px;
+			}
+
+			.day-column {
+				background-color: rgba(20, 10, 50, 0.8);
+				border: 3px solid #a090ff;
+				border-radius: 20px;
+				padding: 0;
+				cursor: pointer;
+				transition: all 0.3s;
+				overflow: hidden;
+				position: relative;
+			}
+
+			.day-header {
+				font-weight: 600;
+				margin-bottom: 10px;
+				padding-bottom: 5px;
+				padding-top: 20px;
+				padding-left: 20px;
+				border-bottom: 2px solid var(--primary-color);
+			}
+
+			.event-card {
+				background-color: #4a3e5e;
+				border-left: 4px solid var(--primary-color);
+				padding: 10px;
+				margin-bottom: 20px;
+				border-radius: 4px;
+				position: relative;
+				margin-left: 20px;
+				margin-right: 20px;
+			}
+
+			.event-time {
+				font-weight: 500;
+				color: #c0c0c0;
+				margin-bottom: 5px;
+			}
+
+			.event-title {
+				font-weight: 600;
+			}
+
+			.event-description {
+				font-size: 0.9em;
+				color: #a0a0a0;
+				margin-top: 5px;
+			}
+
+			.event-actions {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-top: 10px;
+			}
+
+			.edit-event-btn,
+			.delete-event-btn {
+				background: none;
+				border: none;
+				color: var(--primary-color);
+				cursor: pointer;
+				font-size: 0.9em;
+			}
+
+			.add-event-btn {
+				background-color: var(--primary-color);
+				color: white;
+				border: none;
+				padding: 10px 15px;
+				border-radius: 4px;
+				cursor: pointer;
+				margin-top: 15px;
+			}
+
+			.modal {
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.modal-content {
+				background-color: white;
+				padding: 25px;
+				border-radius: 8px;
+				width: 500px;
+				max-width: 90%;
+				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			}
+
+			.modal-form {
+				display: grid;
+				gap: 15px;
+			}
+
+			.modal-form input,
+			.modal-form textarea,
+			.modal-form select {
+				width: 100%;
+				padding: 10px;
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+			}
+
+			.modal-actions {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 20px;
+			}
+		</style>
+	</body>
+</html>
