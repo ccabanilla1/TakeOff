@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - 2025 Hackathon</title>
+		<link rel="stylesheet" href="styles.css" />
+		<script src="navbar.js"></script>
+	</head>
+	<div class="grid-container">
+		<div class="content">
+			<body>
+				<div id="navbar"></div>
+				<main>
+					<img src="assets/earth.gif" alt="earth spinning" class="earth" />
+					<div class="pixel-text">Pixel</div>
+					<div class="perfect-text">Perfect</div>
+					<div class="travel-plans-text">Travel Plans</div>
+				</main>
+				<button class="get-started-btn">Get Started</button>
+			</body>
+		</div>
+	</div>
+</html>
+
+<style>
+	.earth {
+		display: flex;
+		width: 1200px;
+		margin: 20px auto;
+		border-radius: 50%;
+	}
+	.pixel-text {
+		position: absolute;
+		top: 250px;
+		left: 110px;
+		font-family: "Press Start 2P", cursive;
+		font-size: 100px;
+		color: white;
+		z-index: -2;
+	}
+
+	.perfect-text {
+		position: absolute;
+		top: 350px;
+		right: 60px;
+		font-family: "Press Start 2P", cursive;
+		font-size: 100px;
+		color: white;
+		z-index: 10;
+	}
+
+	.travel-plans-text {
+		position: absolute;
+		top: 700px;
+		left: 150px;
+		font-family: "Press Start 2P", cursive;
+		font-size: 100px;
+		color: white;
+		z-index: 10;
+	}
+
+	.get-started-btn {
+		font-family: "Press Start 2P", cursive;
+		background-color: transparent;
+		color: white;
+		border: 4px solid white;
+		padding: 15px 30px;
+		font-size: 20px;
+		cursor: pointer;
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 500px; /* Adjust as needed based on your layout */
+		z-index: 10;
+		text-transform: uppercase;
+		transition: all 0.3s;
+	}
+
+	.get-started-btn:hover {
+		background-color: white;
+		color: #10072a; /* Using one of your gradient colors */
+		box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+	}
+</style>
