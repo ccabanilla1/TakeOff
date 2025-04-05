@@ -1,0 +1,220 @@
+/* Travel Styles Quiz specific styles */
+.quiz-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 40px 20px;
+	color: white;
+	position: relative;
+	z-index: 2;
+}
+
+.quiz-header {
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+.quiz-title {
+	font-family: "Press Start 2P", cursive;
+	font-size: 36px;
+	margin-bottom: 20px;
+	color: #a090ff;
+}
+
+.quiz-description {
+	font-size: 18px;
+	line-height: 1.6;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.quiz-question {
+	font-family: "Press Start 2P", cursive;
+	font-size: 24px;
+	text-align: center;
+	margin-bottom: 40px;
+	color: white;
+}
+
+.quiz-instruction {
+	text-align: center;
+	font-size: 16px;
+	margin-bottom: 30px;
+	color: #a090ff;
+}
+
+/* Travel Styles grid */
+.travel-styles {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+	gap: 40px;
+	margin-bottom: 60px;
+}
+
+.style-card {
+	background-color: rgba(35, 10, 90, 0.5);
+	border: 3px solid #a090ff;
+	border-radius: 4px;
+	overflow: hidden;
+	transition: transform 0.3s, box-shadow 0.3s;
+	cursor: pointer;
+	position: relative;
+}
+
+.style-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 15px 30px rgba(160, 144, 255, 0.3);
+}
+
+.style-card.selected {
+	border-color: #ffffff;
+	box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.selection-indicator {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background-color: rgba(35, 10, 90, 0.8);
+	border: 2px solid #a090ff;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: white;
+	transition: all 0.3s;
+}
+
+.style-card.selected .selection-indicator {
+	background-color: white;
+	color: #230a5a;
+	border-color: white;
+}
+
+.style-image {
+	width: 100%;
+	height: 250px; /* Larger images compared to destination cards */
+	position: relative;
+	overflow: hidden;
+}
+
+.style-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	image-rendering: pixelated; /* For the pixel art effect */
+}
+
+.style-content {
+	padding: 30px;
+}
+
+.style-title {
+	font-family: "Press Start 2P", cursive;
+	font-size: 24px;
+	margin-bottom: 15px;
+	color: #a090ff;
+}
+
+.style-description {
+	font-size: 16px;
+	line-height: 1.6;
+	margin-bottom: 20px;
+}
+
+.perfect-for {
+	margin-bottom: 20px;
+}
+
+.perfect-for-title {
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	margin-bottom: 10px;
+	color: #a090ff;
+}
+
+.traveler-type {
+	position: relative;
+	padding-left: 20px;
+	margin-bottom: 8px;
+	font-size: 14px;
+}
+
+.traveler-type::before {
+	content: "→";
+	position: absolute;
+	left: 0;
+	font-family: "Press Start 2P", cursive;
+	color: #a090ff;
+	font-size: 10px;
+}
+
+.selection-summary {
+	text-align: center;
+	margin-bottom: 30px;
+	font-size: 16px;
+	color: white;
+	font-family: "Press Start 2P", cursive;
+	height: 20px;
+}
+
+.next-question-btn {
+	font-family: "Press Start 2P", cursive;
+	background-color: transparent;
+	color: white;
+	border: 4px solid white;
+	padding: 15px 30px;
+	font-size: 16px;
+	cursor: pointer;
+	text-transform: uppercase;
+	transition: all 0.3s;
+	display: block;
+	margin: 40px auto;
+	max-width: 320px;
+	text-align: center;
+}
+
+.next-question-btn:hover {
+	background-color: white;
+	color: #230a5a;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+.next-question-btn[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.progress-bar {
+	width: 100%;
+	height: 10px;
+	background-color: rgba(35, 10, 90, 0.5);
+	border: 2px solid #a090ff;
+	margin-bottom: 40px;
+	position: relative;
+}
+
+.progress-fill {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 10%; /* First question of 5 */
+	background-color: #a090ff;
+	transition: width 0.5s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.travel-styles {
+		grid-template-columns: 1fr;
+	}
+
+	.style-card {
+		max-width: 500px;
+		margin: 0 auto;
+	}
+}

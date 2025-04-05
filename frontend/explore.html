@@ -8,7 +8,7 @@
 			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
 			rel="stylesheet"
 		/>
-		<link rel="stylesheet" href="styles.css" />
+		<link rel="stylesheet" href="css/styles.css" />
 		<script src="navbar.js"></script>
 	</head>
 	<body>
@@ -192,9 +192,7 @@
 					const destination = this.innerText
 						.replace("Explore ", "")
 						.replace(" →", "");
-					alert(`Starting to plan your trip to ${destination}!`);
-					// In a real implementation, you would redirect to a planning page
-					// or open a modal with more options
+					window.location.href = "quiz1.html";
 				});
 			});
 
@@ -202,8 +200,7 @@
 			document
 				.querySelector(".get-started-btn")
 				.addEventListener("click", function () {
-					alert("Opening trip planner!");
-					// In a real implementation, you would redirect to the main planning interface
+					window.location.href = "where.html";
 				});
 		</script>
 	</body>

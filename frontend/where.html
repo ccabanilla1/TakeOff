@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - Where Would You Like To Go?</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="css/styles.css" />
+		<link rel="stylesheet" href="css/where.css" />
+		<script src="navbar.js"></script>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="content">
+				<div id="navbar"></div>
+
+				<div class="quiz-container">
+					<header class="quiz-header">
+						<h1 class="quiz-title">Travel Planning Quiz</h1>
+						<p class="quiz-description">
+							Answer a few questions and our AI will create a personalized
+							travel itinerary just for you.
+						</p>
+					</header>
+
+					<div class="progress-bar">
+						<div class="progress-fill"></div>
+					</div>
+
+					<div class="question-section">
+						<div class="pixel-globe">
+							<div class="globe-continent continent-1"></div>
+							<div class="globe-continent continent-2"></div>
+							<div class="globe-continent continent-3"></div>
+						</div>
+
+						<div class="question-number">QUESTION 1 OF 10</div>
+						<h2 class="question-text">Where would you like to go?</h2>
+						<p class="question-instruction">
+							Enter a city, country, or region you're interested in visiting
+						</p>
+
+						<div class="input-container">
+							<input
+								type="text"
+								class="destination-input"
+								id="destinationInput"
+								placeholder="e.g., Tokyo, Italy, Caribbean..."
+								autocomplete="off"
+							/>
+							<div
+								class="suggestions-container"
+								id="suggestionsContainer"
+							></div>
+						</div>
+
+						<button class="next-btn" id="nextBtn" disabled>Next →</button>
+						<button class="not-sure-btn" id="notSureBtn">
+							I'm not sure yet
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// Popular destinations for suggestions
+			const popularDestinations = [
+				"Tokyo, Japan",
+				"Paris, France",
+				"New York, USA",
+				"Rome, Italy",
+				"London, UK",
+				"Bali, Indonesia",
+				"Barcelona, Spain",
+				"Dubai, UAE",
+				"Sydney, Australia",
+				"Bangkok, Thailand",
+				"Cancun, Mexico",
+				"Kyoto, Japan",
+				"Amsterdam, Netherlands",
+				"Rio de Janeiro, Brazil",
+				"Hawaii, USA",
+				"Venice, Italy",
+				"Machu Picchu, Peru",
+				"Santorini, Greece",
+				"Cairo, Egypt",
+				"Marrakech, Morocco",
+				"Istanbul, Turkey",
+				"Prague, Czech Republic",
+				"Vienna, Austria",
+				"Seoul, South Korea",
+				"Hong Kong, China",
+				"Singapore",
+				"Maldives",
+				"New Zealand",
+				"Swiss Alps, Switzerland",
+				"Petra, Jordan",
+				"Caribbean Islands",
+				"Alaska, USA",
+				"Iceland",
+				"Croatia",
+				"Portugal",
+				"Vietnam",
+				"Costa Rica",
+				"South Africa",
+				"Ireland",
+				"Scotland",
+			];
+
+			const inputEl = document.getElementById("destinationInput");
+			const suggestionsContainer = document.getElementById(
+				"suggestionsContainer"
+			);
+			const nextBtn = document.getElementById("nextBtn");
+			const notSureBtn = document.getElementById("notSureBtn");
+
+			// Enable/disable next button based on input
+			inputEl.addEventListener("input", function () {
+				nextBtn.disabled = this.value.trim() === "";
+
+				// Show suggestions
+				const inputValue = this.value.toLowerCase();
+				if (inputValue.length >= 2) {
+					const matchingDestinations = popularDestinations.filter((dest) =>
+						dest.toLowerCase().includes(inputValue)
+					);
+
+					displaySuggestions(matchingDestinations);
+				} else {
+					suggestionsContainer.style.display = "none";
+				}
+			});
+
+			// Display matching suggestions
+			function displaySuggestions(suggestions) {
+				if (suggestions.length === 0) {
+					suggestionsContainer.style.display = "none";
+					return;
+				}
+
+				suggestionsContainer.innerHTML = "";
+
+				suggestions.slice(0, 5).forEach((suggestion) => {
+					const suggestionItem = document.createElement("div");
+					suggestionItem.classList.add("suggestion-item");
+					suggestionItem.textContent = suggestion;
+
+					suggestionItem.addEventListener("click", function () {
+						inputEl.value = suggestion;
+						suggestionsContainer.style.display = "none";
+						nextBtn.disabled = false;
+					});
+
+					suggestionsContainer.appendChild(suggestionItem);
+				});
+
+				suggestionsContainer.style.display = "block";
+			}
+
+			// Handle keyboard navigation for suggestions
+			let activeSuggestionIndex = -1;
+
+			inputEl.addEventListener("keydown", function (e) {
+				const suggestions = document.querySelectorAll(".suggestion-item");
+
+				if (e.key === "ArrowDown") {
+					e.preventDefault();
+					activeSuggestionIndex = Math.min(
+						activeSuggestionIndex + 1,
+						suggestions.length - 1
+					);
+					updateActiveSuggestion(suggestions);
+				} else if (e.key === "ArrowUp") {
+					e.preventDefault();
+					activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, -1);
+					updateActiveSuggestion(suggestions);
+				} else if (e.key === "Enter" && activeSuggestionIndex >= 0) {
+					e.preventDefault();
+					inputEl.value = suggestions[activeSuggestionIndex].textContent;
+					suggestionsContainer.style.display = "none";
+					nextBtn.disabled = false;
+					activeSuggestionIndex = -1;
+				} else if (e.key === "Escape") {
+					suggestionsContainer.style.display = "none";
+					activeSuggestionIndex = -1;
+				}
+			});
+
+			function updateActiveSuggestion(suggestions) {
+				suggestions.forEach((suggestion, index) => {
+					suggestion.classList.toggle(
+						"active",
+						index === activeSuggestionIndex
+					);
+
+					if (index === activeSuggestionIndex) {
+						suggestion.scrollIntoView({ block: "nearest" });
+					}
+				});
+			}
+
+			// Hide suggestions when clicking elsewhere
+			document.addEventListener("click", function (e) {
+				if (e.target !== inputEl && e.target !== suggestionsContainer) {
+					suggestionsContainer.style.display = "none";
+					activeSuggestionIndex = -1;
+				}
+			});
+
+			// Next button handler
+			nextBtn.addEventListener("click", function () {
+				const destination = inputEl.value.trim();
+				if (destination) {
+					// Save the destination and proceed to the next question
+					localStorage.setItem("selectedDestination", destination);
+
+					// In a real implementation, you would redirect to the next question page
+					window.location.href = "quiz1.html";
+				}
+			});
+
+			// Not sure button handler
+			notSureBtn.addEventListener("click", function () {
+				// If user isn't sure, we still allow them to proceed
+				localStorage.setItem("selectedDestination", "undecided");
+
+				// In a real implementation, you would redirect to the next question page
+				window.location.href = "quiz1.html";
+			});
+		</script>
+	</body>
+</html>
