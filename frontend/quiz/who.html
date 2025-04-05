@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - Who Are You Traveling With?</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="../css/styles.css" />
+		<link rel="stylesheet" href="../css/who.css" />
+		<script src="../navbar.js" defer></script>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="content">
+				<div id="navbar"></div>
+
+				<div class="quiz-container">
+					<header class="quiz-header">
+						<h1 class="quiz-title">Travel Planning Quiz</h1>
+						<p class="quiz-description">
+							Answer a few questions and our AI will create a personalized
+							travel itinerary just for you.
+						</p>
+					</header>
+
+					<div class="progress-bar">
+						<div class="progress-fill"></div>
+					</div>
+
+					<div class="question-section">
+						<div class="pixel-people">
+							<div class="pixel-person person-1">
+								<div class="pixel-head"></div>
+								<div class="pixel-body"></div>
+							</div>
+							<div class="pixel-person person-2">
+								<div class="pixel-head"></div>
+								<div class="pixel-body"></div>
+							</div>
+						</div>
+
+						<div class="question-number">QUESTION 3 OF 5</div>
+						<h2 class="question-text">Who are you traveling with?</h2>
+						<p class="question-instruction">
+							Select who will be joining you on this trip
+						</p>
+
+						<div class="companions-grid">
+							<!-- Solo Traveler -->
+							<div class="companion-card" data-companion="solo">
+								<div class="selection-indicator">✓</div>
+								<div class="companion-image">
+									<img
+										class="pixel-art"
+										src="assets/solo-pixel.jpg"
+										alt="Pixel art of solo traveler"
+									/>
+								</div>
+								<div class="companion-content">
+									<h3 class="companion-title">Solo</h3>
+									<p class="companion-description">
+										Traveling by yourself for complete freedom and personal
+										discovery.
+									</p>
+								</div>
+							</div>
+
+							<!-- Couple -->
+							<div class="companion-card" data-companion="couple">
+								<div class="selection-indicator">✓</div>
+								<div class="companion-image">
+									<img
+										class="pixel-art"
+										src="assets/couple-pixel.jpg"
+										alt="Pixel art of couple traveling"
+									/>
+								</div>
+								<div class="companion-content">
+									<h3 class="companion-title">Couple</h3>
+									<p class="companion-description">
+										Romantic getaway with your significant other.
+									</p>
+								</div>
+							</div>
+
+							<!-- Friends -->
+							<div class="companion-card" data-companion="friends">
+								<div class="selection-indicator">✓</div>
+								<div class="companion-image">
+									<img
+										class="pixel-art"
+										src="assets/friends-pixel.jpg"
+										alt="Pixel art of friends group"
+									/>
+								</div>
+								<div class="companion-content">
+									<h3 class="companion-title">Friends</h3>
+									<p class="companion-description">
+										Adventure with your friends for shared memories and
+										experiences.
+									</p>
+								</div>
+							</div>
+
+							<!-- Family with Kids -->
+							<div class="companion-card" data-companion="family">
+								<div class="selection-indicator">✓</div>
+								<div class="companion-image">
+									<img
+										class="pixel-art"
+										src="assets/family-pixel.jpg"
+										alt="Pixel art of family with kids"
+									/>
+								</div>
+								<div class="companion-content">
+									<h3 class="companion-title">Family</h3>
+									<p class="companion-description">
+										Trip with family members including children of various ages.
+									</p>
+								</div>
+							</div>
+
+							<!-- Group Tour -->
+							<div class="companion-card" data-companion="group">
+								<div class="selection-indicator">✓</div>
+								<div class="companion-image">
+									<img
+										class="pixel-art"
+										src="assets/group-pixel.jpg"
+										alt="Pixel art of tour group"
+									/>
+								</div>
+								<div class="companion-content">
+									<h3 class="companion-title">Group Tour</h3>
+									<p class="companion-description">
+										Join a guided tour with other travelers for a structured
+										experience.
+									</p>
+								</div>
+							</div>
+
+							<!-- Business -->
+							<div class="companion-card" data-companion="business">
+								<div class="selection-indicator">✓</div>
+								<div class="companion-image">
+									<img
+										class="pixel-art"
+										src="assets/business-pixel.jpg"
+										alt="Pixel art of business traveler"
+									/>
+								</div>
+								<div class="companion-content">
+									<h3 class="companion-title">Business</h3>
+									<p class="companion-description">
+										Work trip with colleagues with some leisure time to explore.
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="selection-summary" id="selectionSummary"></div>
+
+						<div class="navigation-buttons">
+							<button class="prev-btn" id="prevBtn">← Previous</button>
+							<button class="next-btn" id="nextBtn" disabled>Next →</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// DOM elements
+			const companionCards = document.querySelectorAll(".companion-card");
+			const nextBtn = document.getElementById("nextBtn");
+			const prevBtn = document.getElementById("prevBtn");
+			const selectionSummary = document.getElementById("selectionSummary");
+
+			// Track selected companion
+			let selectedCompanion = null;
+
+			// Define companion types with helper text for the summary
+			const companionTypes = {
+				solo: "Solo travel",
+				couple: "Traveling as a couple",
+				friends: "Traveling with friends",
+				family: "Traveling with family",
+				group: "Joining a group tour",
+				business: "Business travel",
+			};
+
+			// Card selection
+			companionCards.forEach((card) => {
+				// Show checkmarks on hover
+				card.addEventListener("mouseenter", function () {
+					if (this !== selectedCompanion) {
+						this.querySelector(".selection-indicator").style.opacity = "0.5";
+					}
+				});
+
+				card.addEventListener("mouseleave", function () {
+					if (this !== selectedCompanion) {
+						this.querySelector(".selection-indicator").style.opacity = "0";
+					}
+				});
+
+				// Handle selection
+				card.addEventListener("click", function () {
+					// Clear previous selection
+					companionCards.forEach((c) => {
+						c.classList.remove("selected");
+						c.querySelector(".selection-indicator").style.opacity = "0";
+					});
+
+					// Select this card
+					this.classList.add("selected");
+					this.querySelector(".selection-indicator").style.opacity = "1";
+					selectedCompanion = this.getAttribute("data-companion");
+
+					// Update selection summary
+					updateSelectionSummary();
+
+					// Enable next button
+					nextBtn.disabled = false;
+				});
+			});
+
+			function updateSelectionSummary() {
+				if (selectedCompanion) {
+					selectionSummary.textContent = companionTypes[selectedCompanion];
+				} else {
+					selectionSummary.textContent = "";
+				}
+			}
+
+			// Previous button handler
+			prevBtn.addEventListener("click", function () {
+				window.location.href = "when.html";
+			});
+
+			// Next button handler
+			nextBtn.addEventListener("click", function () {
+				if (selectedCompanion) {
+					// Save selection
+					localStorage.setItem("selectedCompanion", selectedCompanion);
+					localStorage.setItem(
+						"selectedCompanionText",
+						companionTypes[selectedCompanion]
+					);
+
+					window.location.href = "quiz1.html";
+				}
+			});
+
+			// Hide checkmarks initially
+			document.querySelectorAll(".selection-indicator").forEach((indicator) => {
+				indicator.style.opacity = "0";
+			});
+		</script>
+	</body>
+</html>

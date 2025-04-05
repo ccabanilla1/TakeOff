@@ -163,14 +163,15 @@
 
 .next-question-btn {
 	font-family: "Press Start 2P", cursive;
-	background-color: transparent;
-	color: white;
-	border: 4px solid white;
+	background-color: #5acd68;
+	color: #230a5a;
+	border: 4px solid #5acd68;
 	padding: 15px 30px;
 	font-size: 16px;
 	cursor: pointer;
 	text-transform: uppercase;
 	transition: all 0.3s;
+
 	display: block;
 	margin: 40px auto;
 	max-width: 320px;
@@ -202,7 +203,7 @@
 	left: 0;
 	top: 0;
 	height: 100%;
-	width: 10%; /* First question of 5 */
+	width: 33.33%; /* First question of 5 */
 	background-color: #a090ff;
 	transition: width 0.5s;
 }

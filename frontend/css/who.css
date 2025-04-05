@@ -1,0 +1,283 @@
+/* Quiz specific styles */
+.quiz-container {
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 40px 20px;
+	color: white;
+	position: relative;
+	z-index: 2;
+}
+
+.quiz-header {
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+.quiz-title {
+	font-family: "Press Start 2P", cursive;
+	font-size: 36px;
+	margin-bottom: 20px;
+	color: #a090ff;
+}
+
+.quiz-description {
+	font-size: 18px;
+	line-height: 1.6;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.progress-bar {
+	width: 100%;
+	height: 10px;
+	background-color: rgba(35, 10, 90, 0.5);
+	border: 2px solid #a090ff;
+	margin-bottom: 40px;
+	position: relative;
+}
+
+.progress-fill {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 60%; /* Third question of 5 */
+	background-color: #a090ff;
+	transition: width 0.5s;
+}
+
+.question-section {
+	background-color: rgba(35, 10, 90, 0.5);
+	border: 3px solid #a090ff;
+	border-radius: 4px;
+	padding: 40px;
+	margin-bottom: 60px;
+	text-align: center;
+}
+
+.question-number {
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: #a090ff;
+	margin-bottom: 20px;
+}
+
+.question-text {
+	font-family: "Press Start 2P", cursive;
+	font-size: 24px;
+	margin-bottom: 40px;
+	line-height: 1.5;
+}
+
+.question-instruction {
+	font-size: 16px;
+	margin-bottom: 30px;
+	color: #a090ff;
+}
+
+/* Travel companion cards */
+.companions-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 30px;
+	margin-bottom: 40px;
+}
+
+.companion-card {
+	background-color: rgba(20, 10, 50, 0.8);
+	border: 3px solid #a090ff;
+	border-radius: 4px;
+	padding: 0;
+	cursor: pointer;
+	transition: all 0.3s;
+	overflow: hidden;
+	position: relative;
+}
+
+.companion-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 20px rgba(160, 144, 255, 0.3);
+}
+
+.companion-card.selected {
+	border-color: white;
+	box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.selection-indicator {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background-color: rgba(35, 10, 90, 0.8);
+	border: 2px solid #a090ff;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: white;
+	transition: all 0.3s;
+	opacity: 0;
+	z-index: 10;
+}
+
+.companion-card.selected .selection-indicator {
+	opacity: 1;
+	background-color: white;
+	color: #230a5a;
+	border-color: white;
+}
+
+.companion-image {
+	width: 100%;
+	height: 150px;
+	background-color: #230a5a;
+	position: relative;
+	overflow: hidden;
+}
+
+.pixel-art {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	image-rendering: pixelated;
+}
+
+.companion-content {
+	padding: 20px;
+}
+
+.companion-title {
+	font-family: "Press Start 2P", cursive;
+	font-size: 16px;
+	margin-bottom: 10px;
+	color: #a090ff;
+}
+
+.companion-card.selected .companion-title {
+	color: white;
+}
+
+.companion-description {
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.selection-summary {
+	text-align: center;
+	margin-bottom: 30px;
+	font-size: 16px;
+	color: white;
+	font-family: "Press Start 2P", cursive;
+	height: 20px;
+}
+
+/* Navigation */
+.navigation-buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 40px;
+}
+
+.prev-btn,
+.next-btn {
+	font-family: "Press Start 2P", cursive;
+	background-color: transparent;
+	color: white;
+	border: 4px solid white;
+	padding: 15px 30px;
+	font-size: 16px;
+	cursor: pointer;
+	text-transform: uppercase;
+	transition: all 0.3s;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+	background-color: white;
+	color: #230a5a;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+.next-btn[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Pixel people */
+.pixel-people {
+	width: 150px;
+	height: 80px;
+	margin: 0 auto 40px;
+	position: relative;
+}
+
+.pixel-person {
+	position: absolute;
+	width: 30px;
+	height: 50px;
+}
+
+.pixel-head {
+	width: 20px;
+	height: 20px;
+	border-radius: 10px;
+	background-color: #ffd7b5;
+	position: absolute;
+	top: 0;
+	left: 5px;
+}
+
+.pixel-body {
+	width: 30px;
+	height: 30px;
+	background-color: #a090ff;
+	position: absolute;
+	top: 20px;
+	left: 0;
+}
+
+.person-1 {
+	left: 30px;
+	top: 15px;
+}
+
+.person-2 {
+	left: 80px;
+	top: 15px;
+}
+
+.pixel-person.person-2 .pixel-body {
+	background-color: #5acd68;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.question-text {
+		font-size: 20px;
+	}
+
+	.question-section {
+		padding: 30px 20px;
+	}
+
+	.companions-grid {
+		grid-template-columns: 1fr;
+		max-width: 280px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.navigation-buttons {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.prev-btn,
+	.next-btn {
+		width: 100%;
+	}
+}

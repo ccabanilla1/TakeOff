@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - What's Your Budget?</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="../css/styles.css" />
+		<script src="../navbar.js" defer></script>
+
+		<style>
+			/* Quiz specific styles */
+			.quiz-container {
+				max-width: 1000px;
+				margin: 0 auto;
+				padding: 40px 20px;
+				color: white;
+				position: relative;
+				z-index: 2;
+			}
+
+			.quiz-header {
+				text-align: center;
+				margin-bottom: 60px;
+			}
+
+			.quiz-title {
+				font-family: "Press Start 2P", cursive;
+				font-size: 36px;
+				margin-bottom: 20px;
+				color: #a090ff;
+			}
+
+			.quiz-description {
+				font-size: 18px;
+				line-height: 1.6;
+				max-width: 800px;
+				margin: 0 auto;
+			}
+
+			.progress-bar {
+				width: 100%;
+				height: 10px;
+				background-color: rgba(35, 10, 90, 0.5);
+				border: 2px solid #a090ff;
+				margin-bottom: 40px;
+				position: relative;
+			}
+
+			.progress-fill {
+				position: absolute;
+				left: 0;
+				top: 0;
+				height: 100%;
+				width: 80%; /* Fourth question of 5 */
+				background-color: #a090ff;
+				transition: width 0.5s;
+			}
+
+			.question-section {
+				background-color: rgba(35, 10, 90, 0.5);
+				border: 3px solid #a090ff;
+				border-radius: 4px;
+				padding: 40px;
+				margin-bottom: 60px;
+				text-align: center;
+			}
+
+			.question-number {
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				color: #a090ff;
+				margin-bottom: 20px;
+			}
+
+			.question-text {
+				font-family: "Press Start 2P", cursive;
+				font-size: 24px;
+				margin-bottom: 40px;
+				line-height: 1.5;
+			}
+
+			.question-instruction {
+				font-size: 16px;
+				margin-bottom: 30px;
+				color: #a090ff;
+			}
+
+			/* Budget cards */
+			.budget-grid {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				flex-wrap: nowrap;
+				gap: 15px;
+				margin-bottom: 40px;
+				overflow-x: auto; /* Allow horizontal scrolling on small screens */
+				padding: 10px 0;
+			}
+
+			.budget-card {
+				background-color: rgba(20, 10, 50, 0.8);
+				border: 3px solid #a090ff;
+				border-radius: 4px;
+				padding: 20px 15px;
+				cursor: pointer;
+				transition: all 0.3s;
+				overflow: hidden;
+				position: relative;
+				flex: 1;
+				min-width: 200px; /* Ensure cards don't get too small */
+				max-width: 24%; /* Limit width to roughly 1/4 of container */
+			}
+
+			.budget-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 10px 20px rgba(160, 144, 255, 0.3);
+			}
+
+			.budget-card.selected {
+				border-color: white;
+				box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+			}
+
+			.selection-indicator {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background-color: rgba(35, 10, 90, 0.8);
+				border: 2px solid #a090ff;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				color: white;
+				transition: all 0.3s;
+				opacity: 0;
+				z-index: 10;
+			}
+
+			.budget-card.selected .selection-indicator {
+				opacity: 1;
+				background-color: white;
+				color: #230a5a;
+				border-color: white;
+			}
+
+			.budget-icon {
+				font-size: 32px;
+				margin-bottom: 20px;
+			}
+
+			.budget-title {
+				font-family: "Press Start 2P", cursive;
+				font-size: 16px;
+				margin-bottom: 15px;
+				color: #a090ff;
+			}
+
+			.budget-card.selected .budget-title {
+				color: white;
+			}
+
+			.budget-range {
+				font-size: 14px;
+				line-height: 1.4;
+				margin-bottom: 10px;
+				font-weight: bold;
+			}
+
+			.budget-description {
+				font-size: 13px;
+				line-height: 1.4;
+				opacity: 0.9;
+			}
+
+			.selection-summary {
+				text-align: center;
+				margin-bottom: 30px;
+				font-size: 16px;
+				color: white;
+				font-family: "Press Start 2P", cursive;
+				height: 20px;
+			}
+
+			/* Navigation */
+			.navigation-buttons {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 40px;
+			}
+
+			.prev-btn,
+			.next-btn {
+				font-family: "Press Start 2P", cursive;
+				background-color: transparent;
+				color: white;
+				border: 4px solid white;
+				padding: 15px 30px;
+				font-size: 16px;
+				cursor: pointer;
+				text-transform: uppercase;
+				transition: all 0.3s;
+			}
+
+			.prev-btn:hover,
+			.next-btn:hover {
+				background-color: white;
+				color: #230a5a;
+				box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+			}
+
+			.next-btn[disabled] {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+
+			/* Pixel coins */
+			.pixel-wallet {
+				width: 120px;
+				height: 100px;
+				margin: 0 auto 40px;
+				position: relative;
+			}
+
+			.wallet-base {
+				width: 100px;
+				height: 60px;
+				background-color: #a090ff;
+				position: absolute;
+				bottom: 0;
+				left: 10px;
+				border-radius: 5px;
+			}
+
+			.wallet-flap {
+				width: 100px;
+				height: 30px;
+				background-color: #8070dd;
+				position: absolute;
+				bottom: 45px;
+				left: 10px;
+				border-radius: 5px 5px 0 0;
+			}
+
+			.coin {
+				width: 30px;
+				height: 30px;
+				background-color: #ffd700;
+				border-radius: 50%;
+				position: absolute;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: bold;
+				color: #230a5a;
+				font-size: 12px;
+				border: 2px solid #e0b800;
+			}
+
+			.coin-1 {
+				top: 10px;
+				left: 20px;
+			}
+
+			.coin-2 {
+				top: 20px;
+				left: 60px;
+			}
+
+			.coin-3 {
+				top: 50px;
+				left: 30px;
+			}
+
+			/* Responsive */
+			@media (max-width: 768px) {
+				.question-text {
+					font-size: 20px;
+				}
+
+				.question-section {
+					padding: 30px 20px;
+				}
+
+				.budget-grid {
+					grid-template-columns: 1fr;
+					max-width: 280px;
+					margin-left: auto;
+					margin-right: auto;
+				}
+
+				.navigation-buttons {
+					flex-direction: column;
+					gap: 20px;
+				}
+
+				.prev-btn,
+				.next-btn {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="content">
+				<div id="navbar"></div>
+
+				<div class="quiz-container">
+					<header class="quiz-header">
+						<h1 class="quiz-title">Travel Planning Quiz</h1>
+						<p class="quiz-description">
+							Answer a few questions and our AI will create a personalized
+							travel itinerary just for you.
+						</p>
+					</header>
+
+					<div class="progress-bar">
+						<div class="progress-fill"></div>
+					</div>
+
+					<div class="question-section">
+						<div class="pixel-wallet">
+							<div class="wallet-base"></div>
+							<div class="wallet-flap"></div>
+							<div class="coin coin-1">$</div>
+							<div class="coin coin-2">$</div>
+							<div class="coin coin-3">$</div>
+						</div>
+
+						<div class="question-number">QUESTION 4 OF 5</div>
+						<h2 class="question-text">What's your budget range?</h2>
+						<p class="question-instruction">
+							Select the option that best matches your spending plan
+						</p>
+
+						<div class="budget-grid">
+							<!-- Budget-friendly -->
+							<div class="budget-card" data-budget="budget">
+								<div class="selection-indicator">✓</div>
+								<div class="budget-icon">💰</div>
+								<h3 class="budget-title">Budget-Friendly</h3>
+								<p class="budget-range">$-$$</p>
+								<p class="budget-description">
+									Affordable accommodations and economical activities while
+									still experiencing the destination.
+								</p>
+							</div>
+
+							<!-- Mid-range -->
+							<div class="budget-card" data-budget="midrange">
+								<div class="selection-indicator">✓</div>
+								<div class="budget-icon">💰💰</div>
+								<h3 class="budget-title">Mid-Range</h3>
+								<p class="budget-range">$$-$$$</p>
+								<p class="budget-description">
+									Comfortable accommodations with a mix of standard and premium
+									experiences.
+								</p>
+							</div>
+
+							<!-- Luxury -->
+							<div class="budget-card" data-budget="luxury">
+								<div class="selection-indicator">✓</div>
+								<div class="budget-icon">💰💰💰</div>
+								<h3 class="budget-title">Luxury</h3>
+								<p class="budget-range">$$$-$$$$</p>
+								<p class="budget-description">
+									High-end accommodations and exclusive experiences for a
+									premium vacation.
+								</p>
+							</div>
+
+							<!-- No specific budget -->
+							<div class="budget-card" data-budget="flexible">
+								<div class="selection-indicator">✓</div>
+								<div class="budget-icon">🔄</div>
+								<h3 class="budget-title">Flexible</h3>
+								<p class="budget-range">Mix & Match</p>
+								<p class="budget-description">
+									Mix of budget and premium options, prioritizing value for
+									specific interests.
+								</p>
+							</div>
+						</div>
+
+						<div class="selection-summary" id="selectionSummary"></div>
+
+						<div class="navigation-buttons">
+							<button class="prev-btn" id="prevBtn">← Previous</button>
+							<button class="next-btn" id="nextBtn" disabled>Next →</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// DOM elements
+			const budgetCards = document.querySelectorAll(".budget-card");
+			const nextBtn = document.getElementById("nextBtn");
+			const prevBtn = document.getElementById("prevBtn");
+			const selectionSummary = document.getElementById("selectionSummary");
+
+			// Track selected budget
+			let selectedBudget = null;
+
+			// Define budget types with helper text for the summary
+			const budgetTypes = {
+				budget: "Budget-Friendly ($-$$)",
+				midrange: "Mid-Range ($$-$$$)",
+				luxury: "Luxury ($$$-$$$$)",
+				flexible: "Flexible Budget",
+			};
+
+			// Card selection
+			budgetCards.forEach((card) => {
+				// Show checkmarks on hover
+				card.addEventListener("mouseenter", function () {
+					if (this.getAttribute("data-budget") !== selectedBudget) {
+						this.querySelector(".selection-indicator").style.opacity = "0.5";
+					}
+				});
+
+				card.addEventListener("mouseleave", function () {
+					if (this.getAttribute("data-budget") !== selectedBudget) {
+						this.querySelector(".selection-indicator").style.opacity = "0";
+					}
+				});
+
+				// Handle selection
+				card.addEventListener("click", function () {
+					// Clear previous selection
+					budgetCards.forEach((c) => {
+						c.classList.remove("selected");
+						c.querySelector(".selection-indicator").style.opacity = "0";
+					});
+
+					// Select this card
+					this.classList.add("selected");
+					this.querySelector(".selection-indicator").style.opacity = "1";
+					selectedBudget = this.getAttribute("data-budget");
+
+					// Update selection summary
+					updateSelectionSummary();
+
+					// Enable next button
+					nextBtn.disabled = false;
+				});
+			});
+
+			function updateSelectionSummary() {
+				if (selectedBudget) {
+					selectionSummary.textContent = budgetTypes[selectedBudget];
+				} else {
+					selectionSummary.textContent = "";
+				}
+			}
+
+			// Previous button handler
+			prevBtn.addEventListener("click", function () {
+				window.location.href = "quiz1.html";
+			});
+
+			// Next button handler
+			nextBtn.addEventListener("click", function () {
+				if (selectedBudget) {
+					// Save selection
+					localStorage.setItem("selectedBudget", selectedBudget);
+					localStorage.setItem(
+						"selectedBudgetText",
+						budgetTypes[selectedBudget]
+					);
+
+					window.location.href = "loading.html";
+				}
+			});
+
+			// Hide checkmarks initially
+			document.querySelectorAll(".selection-indicator").forEach((indicator) => {
+				indicator.style.opacity = "0";
+			});
+		</script>
+	</body>
+</html>

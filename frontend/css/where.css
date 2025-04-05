@@ -41,7 +41,7 @@
 	left: 0;
 	top: 0;
 	height: 100%;
-	width: 10%; /* First question of 5 */
+	width: 20%; /* First question of 5 */
 	background-color: #a090ff;
 	transition: width 0.5s;
 }

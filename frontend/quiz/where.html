@@ -8,9 +8,9 @@
 			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
 			rel="stylesheet"
 		/>
-		<link rel="stylesheet" href="css/styles.css" />
-		<link rel="stylesheet" href="css/where.css" />
-		<script src="navbar.js"></script>
+		<link rel="stylesheet" href="../css/styles.css" />
+		<link rel="stylesheet" href="../css/where.css" />
+		<script src="../navbar.js" defer></script>
 	</head>
 	<body>
 		<div class="grid-container">
@@ -37,7 +37,7 @@
 							<div class="globe-continent continent-3"></div>
 						</div>
 
-						<div class="question-number">QUESTION 1 OF 10</div>
+						<div class="question-number">QUESTION 1 OF 5</div>
 						<h2 class="question-text">Where would you like to go?</h2>
 						<p class="question-instruction">
 							Enter a city, country, or region you're interested in visiting
@@ -219,7 +219,7 @@
 					localStorage.setItem("selectedDestination", destination);
 
 					// In a real implementation, you would redirect to the next question page
-					window.location.href = "quiz1.html";
+					window.location.href = "when.html";
 				}
 			});
 
@@ -229,7 +229,7 @@
 				localStorage.setItem("selectedDestination", "undecided");
 
 				// In a real implementation, you would redirect to the next question page
-				window.location.href = "quiz1.html";
+				window.location.href = "when.html";
 			});
 		</script>
 	</body>

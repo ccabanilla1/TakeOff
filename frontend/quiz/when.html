@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - When Would You Like To Travel?</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="../css/styles.css" />
+		<link rel="stylesheet" href="../css/when.css" />
+		<script src="../navbar.js" defer></script>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="content">
+				<div id="navbar"></div>
+
+				<div class="quiz-container">
+					<header class="quiz-header">
+						<h1 class="quiz-title">Travel Planning Quiz</h1>
+						<p class="quiz-description">
+							Answer a few questions and our AI will create a personalized
+							travel itinerary just for you.
+						</p>
+					</header>
+
+					<div class="progress-bar">
+						<div class="progress-fill"></div>
+					</div>
+
+					<div class="question-section">
+						<div class="pixel-calendar">
+							<div class="calendar-base"></div>
+							<div class="calendar-header"></div>
+							<div class="calendar-line line-1"></div>
+							<div class="calendar-line line-2"></div>
+							<div class="calendar-line line-3"></div>
+							<div class="calendar-line line-4"></div>
+							<div class="calendar-line line-5"></div>
+							<div class="calendar-line line-6"></div>
+							<div class="calendar-line line-7"></div>
+							<div class="calendar-line line-8"></div>
+							<div class="calendar-line line-9"></div>
+						</div>
+
+						<div class="question-number">QUESTION 2 OF 5</div>
+						<h2 class="question-text">When would you like to travel?</h2>
+						<p class="question-instruction">
+							Select a season or enter specific dates
+						</p>
+
+						<div class="calendar-container">
+							<div class="season-options">
+								<div class="season-option" data-season="spring">
+									<div class="season-icon">🌸</div>
+									<div class="season-name">Spring</div>
+									<div class="season-months">Mar-May</div>
+								</div>
+
+								<div class="season-option" data-season="summer">
+									<div class="season-icon">☀️</div>
+									<div class="season-name">Summer</div>
+									<div class="season-months">Jun-Aug</div>
+								</div>
+
+								<div class="season-option" data-season="fall">
+									<div class="season-icon">🍂</div>
+									<div class="season-name">Fall</div>
+									<div class="season-months">Sep-Nov</div>
+								</div>
+
+								<div class="season-option" data-season="winter">
+									<div class="season-icon">❄️</div>
+									<div class="season-name">Winter</div>
+									<div class="season-months">Dec-Feb</div>
+								</div>
+							</div>
+
+							<button class="custom-date-toggle" id="customDateToggle">
+								I have specific dates in mind
+							</button>
+
+							<div class="date-range-inputs" id="dateRangeInputs">
+								<div class="date-range-container">
+									<div class="date-input-group">
+										<label class="date-label" for="startDate">Start Date</label>
+										<input type="date" id="startDate" class="date-input" />
+									</div>
+
+									<div class="date-input-group">
+										<label class="date-label" for="endDate">End Date</label>
+										<input type="date" id="endDate" class="date-input" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<button class="not-sure-date" id="notSureDate">
+							I'm flexible with dates
+						</button>
+
+						<div class="navigation-buttons">
+							<button class="prev-btn" id="prevBtn">← Previous</button>
+							<button class="next-btn" id="nextBtn" disabled>Next →</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// DOM elements
+			const seasonOptions = document.querySelectorAll(".season-option");
+			const customDateToggle = document.getElementById("customDateToggle");
+			const dateRangeInputs = document.getElementById("dateRangeInputs");
+			const startDateInput = document.getElementById("startDate");
+			const endDateInput = document.getElementById("endDate");
+			const nextBtn = document.getElementById("nextBtn");
+			const prevBtn = document.getElementById("prevBtn");
+			const notSureDate = document.getElementById("notSureDate");
+
+			// Set min dates to today for date inputs
+			const today = new Date();
+			const nextYear = new Date();
+			nextYear.setFullYear(today.getFullYear() + 2);
+
+			const todayStr = today.toISOString().split("T")[0];
+			const nextYearStr = nextYear.toISOString().split("T")[0];
+
+			startDateInput.min = todayStr;
+			startDateInput.max = nextYearStr;
+			endDateInput.min = todayStr;
+			endDateInput.max = nextYearStr;
+
+			// Track selected season or dates
+			let selectedSeason = null;
+			let selectedStartDate = null;
+			let selectedEndDate = null;
+			let isDateRangeVisible = false;
+
+			// Season selection
+			seasonOptions.forEach((option) => {
+				option.addEventListener("click", function () {
+					// If date range is visible, hide it
+					if (isDateRangeVisible) {
+						dateRangeInputs.classList.remove("visible");
+						isDateRangeVisible = false;
+						startDateInput.value = "";
+						endDateInput.value = "";
+						selectedStartDate = null;
+						selectedEndDate = null;
+					}
+
+					// Toggle selection for this season
+					seasonOptions.forEach((opt) => opt.classList.remove("selected"));
+					this.classList.add("selected");
+					selectedSeason = this.getAttribute("data-season");
+
+					// Enable next button
+					nextBtn.disabled = false;
+				});
+			});
+
+			// Toggle custom date range
+			customDateToggle.addEventListener("click", function () {
+				isDateRangeVisible = !isDateRangeVisible;
+				dateRangeInputs.classList.toggle("visible", isDateRangeVisible);
+
+				// If showing date inputs, clear season selection
+				if (isDateRangeVisible) {
+					seasonOptions.forEach((opt) => opt.classList.remove("selected"));
+					selectedSeason = null;
+
+					// Disable next button until both dates are selected
+					nextBtn.disabled = !(selectedStartDate && selectedEndDate);
+				}
+			});
+
+			// Date input handlers
+			startDateInput.addEventListener("change", function () {
+				selectedStartDate = this.value;
+
+				// If end date is before start date, reset end date
+				if (selectedEndDate && selectedEndDate < selectedStartDate) {
+					endDateInput.value = "";
+					selectedEndDate = null;
+				}
+
+				// Set min date for end date input
+				endDateInput.min = selectedStartDate;
+
+				// Enable next button if both dates are selected
+				nextBtn.disabled = !(selectedStartDate && selectedEndDate);
+			});
+
+			endDateInput.addEventListener("change", function () {
+				selectedEndDate = this.value;
+
+				// Enable next button if both dates are selected
+				nextBtn.disabled = !(selectedStartDate && selectedEndDate);
+			});
+
+			notSureDate.addEventListener("click", function () {
+				// Clear all selections
+				seasonOptions.forEach((opt) => opt.classList.remove("selected"));
+				dateRangeInputs.classList.remove("visible");
+				isDateRangeVisible = false;
+				startDateInput.value = "";
+				endDateInput.value = "";
+
+				// Set flexible timing
+				selectedSeason = "flexible";
+				selectedStartDate = null;
+				selectedEndDate = null;
+
+				// Save the flexible selection to localStorage
+				localStorage.setItem("selectedTimeframe", "Flexible dates");
+
+				// Go directly to the duration question instead of who page
+				window.location.href = "length.html"; // This will be your duration question page
+			});
+
+			// Previous button handler
+			prevBtn.addEventListener("click", function () {
+				window.location.href = "where.html";
+			});
+
+			// Next button handler
+			nextBtn.addEventListener("click", function () {
+				let selectedTimeframe = "";
+
+				if (selectedSeason === "flexible") {
+					selectedTimeframe = "Flexible dates";
+				} else if (selectedSeason) {
+					selectedTimeframe = `${
+						selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)
+					} (${getSeasonMonths(selectedSeason)})`;
+				} else if (selectedStartDate && selectedEndDate) {
+					selectedTimeframe = `${formatDate(selectedStartDate)} to ${formatDate(
+						selectedEndDate
+					)}`;
+				}
+
+				// Save selection
+				localStorage.setItem("selectedTimeframe", selectedTimeframe);
+
+				// In a real implementation, you would redirect to the travel styles question
+				window.location.href = "who.html";
+			});
+
+			// Helper functions
+			function getSeasonMonths(season) {
+				const seasonMap = {
+					spring: "March-May",
+					summer: "June-August",
+					fall: "September-November",
+					winter: "December-February",
+				};
+				return seasonMap[season] || "";
+			}
+
+			function formatDate(dateString) {
+				const date = new Date(dateString);
+				const options = { year: "numeric", month: "long", day: "numeric" };
+				return date.toLocaleDateString("en-US", options);
+			}
+		</script>
+	</body>
+</html>

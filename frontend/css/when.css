@@ -1,0 +1,347 @@
+/* Quiz specific styles */
+.quiz-container {
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 40px 20px;
+	color: white;
+	position: relative;
+	z-index: 2;
+}
+
+.quiz-header {
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+.quiz-title {
+	font-family: "Press Start 2P", cursive;
+	font-size: 36px;
+	margin-bottom: 20px;
+	color: #a090ff;
+}
+
+.quiz-description {
+	font-size: 18px;
+	line-height: 1.6;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.progress-bar {
+	width: 100%;
+	height: 10px;
+	background-color: rgba(35, 10, 90, 0.5);
+	border: 2px solid #a090ff;
+	margin-bottom: 40px;
+	position: relative;
+}
+
+.progress-fill {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 40%; /* Second question of 5 */
+	background-color: #a090ff;
+	transition: width 0.5s;
+}
+
+.question-section {
+	background-color: rgba(35, 10, 90, 0.5);
+	border: 3px solid #a090ff;
+	border-radius: 4px;
+	padding: 40px;
+	margin-bottom: 60px;
+	text-align: center;
+}
+
+.question-number {
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: #a090ff;
+	margin-bottom: 20px;
+}
+
+.question-text {
+	font-family: "Press Start 2P", cursive;
+	font-size: 24px;
+	margin-bottom: 40px;
+	line-height: 1.5;
+}
+
+.question-instruction {
+	font-size: 16px;
+	margin-bottom: 30px;
+	color: #a090ff;
+}
+
+/* Calendar section */
+.calendar-container {
+	max-width: 600px;
+	margin: 0 auto 40px;
+}
+
+.season-options {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+	gap: 20px;
+	margin-bottom: 40px;
+}
+
+.season-option {
+	background-color: rgba(20, 10, 50, 0.8);
+	border: 2px solid #a090ff;
+	border-radius: 4px;
+	padding: 20px 15px;
+	cursor: pointer;
+	transition: all 0.3s;
+	position: relative;
+	overflow: hidden;
+}
+
+.season-option:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 5px 15px rgba(160, 144, 255, 0.3);
+}
+
+.season-option.selected {
+	border-color: white;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.season-icon {
+	font-size: 24px;
+	margin-bottom: 10px;
+}
+
+.season-name {
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: #a090ff;
+}
+
+.season-option.selected .season-name {
+	color: white;
+}
+
+.season-months {
+	font-size: 12px;
+	margin-top: 5px;
+	opacity: 0.8;
+}
+
+.date-range-container {
+	margin-top: 40px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+}
+
+.date-input-group {
+	text-align: left;
+}
+
+.date-label {
+	display: block;
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: #a090ff;
+	margin-bottom: 10px;
+}
+
+.date-input {
+	width: 100%;
+	padding: 12px;
+	background-color: rgba(20, 10, 50, 0.8);
+	border: 2px solid #a090ff;
+	border-radius: 4px;
+	color: white;
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+}
+
+.date-input:focus {
+	outline: none;
+	border-color: white;
+	box-shadow: 0 0 15px rgba(160, 144, 255, 0.5);
+}
+
+.custom-date-toggle {
+	font-family: "Press Start 2P", cursive;
+	font-size: 14px;
+	color: #a090ff;
+	background: none;
+	border: none;
+	cursor: pointer;
+	text-decoration: underline;
+	margin-top: 20px;
+	transition: color 0.3s;
+}
+
+.custom-date-toggle:hover {
+	color: white;
+}
+
+.date-range-inputs {
+	margin-top: 20px;
+	display: none; /* Hidden by default, shown when Custom Date is clicked */
+}
+
+.date-range-inputs.visible {
+	display: grid;
+	animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Pixel calendar icon */
+.pixel-calendar {
+	width: 100px;
+	height: 100px;
+	margin: 0 auto 40px;
+	position: relative;
+}
+
+.calendar-base {
+	width: 80px;
+	height: 90px;
+	background-color: white;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	border-radius: 3px;
+}
+
+.calendar-header {
+	width: 80px;
+	height: 20px;
+	background-color: #a090ff;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+.calendar-line {
+	width: 10px;
+	height: 3px;
+	background-color: #a090ff;
+	position: absolute;
+}
+
+.line-1 {
+	top: 40px;
+	left: 20px;
+}
+.line-2 {
+	top: 40px;
+	left: 40px;
+}
+.line-3 {
+	top: 40px;
+	left: 60px;
+}
+.line-4 {
+	top: 50px;
+	left: 20px;
+}
+.line-5 {
+	top: 50px;
+	left: 40px;
+}
+.line-6 {
+	top: 50px;
+	left: 60px;
+}
+.line-7 {
+	top: 60px;
+	left: 20px;
+}
+.line-8 {
+	top: 60px;
+	left: 40px;
+}
+.line-9 {
+	top: 60px;
+	left: 60px;
+}
+
+.navigation-buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 40px;
+}
+
+.prev-btn,
+.next-btn {
+	font-family: "Press Start 2P", cursive;
+	background-color: transparent;
+	color: white;
+	border: 4px solid white;
+	padding: 15px 30px;
+	font-size: 16px;
+	cursor: pointer;
+	text-transform: uppercase;
+	transition: all 0.3s;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+	background-color: white;
+	color: #230a5a;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+.next-btn[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.not-sure-date {
+	font-family: "Press Start 2P", cursive;
+	background-color: transparent;
+	border: none;
+	color: #a090ff;
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 14px;
+	margin-top: 20px;
+	transition: color 0.3s;
+	display: block;
+	margin: 20px auto;
+}
+
+.not-sure-date:hover {
+	color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.question-text {
+		font-size: 20px;
+	}
+
+	.question-section {
+		padding: 30px 20px;
+	}
+
+	.date-range-container {
+		grid-template-columns: 1fr;
+	}
+
+	.navigation-buttons {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.prev-btn,
+	.next-btn {
+		width: 100%;
+	}
+}

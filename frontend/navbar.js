@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	fontLink.href =
 		"https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap";
 	document.head.appendChild(fontLink);
-	const style = document.createElement("style");
 
+	const style = document.createElement("style");
 	style.textContent = `
     .navbar {
       background-color: transparent;
@@ -13,55 +13,54 @@ document.addEventListener("DOMContentLoaded", function () {
       justify-content: space-between;
       padding: 1rem;
       font-family: 'Press Start 2P';
+      align-items: center;
     }
-    
+
     .logo img {
-      color: white;
-      padding-top: -1;
       max-width: 150px;
-      font-size: 1.5rem;
-      text-decoration: none;
     }
-    
+
     .nav-links {
       display: flex;
       list-style: none;
       margin: 0;
-      padding-top: 45px;
+      padding-top: 10px;
     }
-    
+
     .nav-links li {
       margin-left: 1.5rem;
     }
-    
+
     .nav-links a {
       color: white;
       text-decoration: none;
     }
-    
+
     .nav-links a:hover {
       text-decoration: underline;
     }
   `;
-
 	document.head.appendChild(style);
-	const navbarContainer = document.getElementById("navbar");
-	navbarContainer.innerHTML = `
-<nav class="navbar">
-  <div class="logo">
-    <a href="#"><img src="assets/logo.png"></a>
-  </div>
-  <ul class="nav-links">
-    <li>
-      <a href="home.html">Home</a>
-    </li>
-    <li>
-      <a href="about.html">About Us</a>
-    </li>
-    <li>
-      <a href="explore.html">Explore</a>
-    </li>
-  </ul>
-</nav>
-`;
+
+	const navbar = document.getElementById("navbar");
+
+	let pathPrefix = "";
+	if (window.location.pathname.includes("/quiz/")) {
+		pathPrefix = "../";
+	}
+
+	navbar.innerHTML = `
+    <nav class="navbar">
+      <div class="logo">
+        <a href="${pathPrefix}home.html">
+          <img src="${pathPrefix}assets/logo.png" alt="Logo" />
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="${pathPrefix}home.html">Home</a></li>
+        <li><a href="${pathPrefix}about.html">About Us</a></li>
+        <li><a href="${pathPrefix}explore.html">Explore</a></li>
+      </ul>
+    </nav>
+  `;
 });

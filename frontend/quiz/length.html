@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TakeOff - How Long Will You Be Traveling?</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="../css/styles.css" />
+		<script src="../navbar.js" defer></script>
+
+		<style>
+			/* Quiz specific styles */
+			.quiz-container {
+				max-width: 1000px;
+				margin: 0 auto;
+				padding: 40px 20px;
+				color: white;
+				position: relative;
+				z-index: 2;
+			}
+
+			.quiz-header {
+				text-align: center;
+				margin-bottom: 60px;
+			}
+
+			.quiz-title {
+				font-family: "Press Start 2P", cursive;
+				font-size: 36px;
+				margin-bottom: 20px;
+				color: #a090ff;
+			}
+
+			.quiz-description {
+				font-size: 18px;
+				line-height: 1.6;
+				max-width: 800px;
+				margin: 0 auto;
+			}
+
+			.progress-bar {
+				width: 100%;
+				height: 10px;
+				background-color: rgba(35, 10, 90, 0.5);
+				border: 2px solid #a090ff;
+				margin-bottom: 40px;
+				position: relative;
+			}
+
+			.progress-fill {
+				position: absolute;
+				left: 0;
+				top: 0;
+				height: 100%;
+				width: 20%;
+				background-color: #a090ff;
+				transition: width 0.5s;
+			}
+
+			.question-section {
+				background-color: rgba(35, 10, 90, 0.5);
+				border: 3px solid #a090ff;
+				border-radius: 4px;
+				padding: 40px;
+				margin-bottom: 60px;
+				text-align: center;
+			}
+
+			.question-number {
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				color: #a090ff;
+				margin-bottom: 20px;
+			}
+
+			.question-text {
+				font-family: "Press Start 2P", cursive;
+				font-size: 24px;
+				margin-bottom: 40px;
+				line-height: 1.5;
+			}
+
+			.question-instruction {
+				font-size: 16px;
+				margin-bottom: 30px;
+				color: #a090ff;
+			}
+
+			/* Duration cards */
+			/* Duration cards - Modified for single row layout */
+			.duration-grid {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				flex-wrap: nowrap;
+				gap: 15px;
+				margin-bottom: 40px;
+				overflow-x: auto; /* Allow horizontal scrolling on small screens */
+				padding: 10px 0;
+			}
+
+			.duration-card {
+				background-color: rgba(20, 10, 50, 0.8);
+				border: 3px solid #a090ff;
+				border-radius: 4px;
+				padding: 20px 15px;
+				cursor: pointer;
+				transition: all 0.3s;
+				overflow: hidden;
+				position: relative;
+				flex: 1;
+				min-width: 200px; /* Ensure cards don't get too small */
+				max-width: 24%; /* Limit width to roughly 1/4 of container */
+			}
+
+			.duration-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 10px 20px rgba(160, 144, 255, 0.3);
+			}
+
+			.duration-card.selected {
+				border-color: white;
+				box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+			}
+
+			.selection-indicator {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background-color: rgba(35, 10, 90, 0.8);
+				border: 2px solid #a090ff;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				color: white;
+				transition: all 0.3s;
+				opacity: 0;
+				z-index: 10;
+			}
+
+			.duration-card.selected .selection-indicator {
+				opacity: 1;
+				background-color: white;
+				color: #230a5a;
+				border-color: white;
+			}
+
+			.duration-icon {
+				font-size: 32px;
+				margin-bottom: 20px;
+			}
+
+			.duration-title {
+				font-family: "Press Start 2P", cursive;
+				font-size: 16px;
+				margin-bottom: 15px;
+				color: #a090ff;
+			}
+
+			.duration-card.selected .duration-title {
+				color: white;
+			}
+
+			.duration-days {
+				font-size: 14px;
+				line-height: 1.4;
+				margin-bottom: 10px;
+				font-weight: bold;
+			}
+
+			.duration-description {
+				font-size: 13px;
+				line-height: 1.4;
+				opacity: 0.9;
+			}
+
+			.custom-duration {
+				margin-top: 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.custom-duration-toggle {
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				color: #a090ff;
+				background: none;
+				border: none;
+				cursor: pointer;
+				text-decoration: underline;
+				margin-bottom: 20px;
+				transition: color 0.3s;
+			}
+
+			.custom-duration-toggle:hover {
+				color: white;
+			}
+
+			.custom-duration-input {
+				display: none;
+				margin-top: 10px;
+				max-width: 300px;
+			}
+
+			.custom-duration-input.visible {
+				display: flex;
+				animation: fadeIn 0.5s;
+			}
+
+			.days-input-container {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
+
+			.days-input {
+				width: 70px;
+				padding: 10px;
+				background-color: rgba(20, 10, 50, 0.8);
+				border: 2px solid #a090ff;
+				border-radius: 4px;
+				color: white;
+				font-size: 16px;
+				text-align: center;
+			}
+
+			.days-input:focus {
+				outline: none;
+				border-color: white;
+			}
+
+			.days-label {
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				color: white;
+			}
+
+			.apply-duration-btn {
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				background-color: #a090ff;
+				color: #230a5a;
+				border: none;
+				padding: 10px 20px;
+				border-radius: 4px;
+				cursor: pointer;
+				transition: all 0.3s;
+			}
+
+			.apply-duration-btn:hover {
+				background-color: white;
+				box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+			}
+
+			.selection-summary {
+				text-align: center;
+				margin-bottom: 30px;
+				font-size: 16px;
+				color: white;
+				font-family: "Press Start 2P", cursive;
+				height: 20px;
+			}
+
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+
+			/* Navigation */
+			.navigation-buttons {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 40px;
+			}
+
+			.prev-btn,
+			.next-btn {
+				font-family: "Press Start 2P", cursive;
+				background-color: transparent;
+				color: white;
+				border: 4px solid white;
+				padding: 15px 30px;
+				font-size: 16px;
+				cursor: pointer;
+				text-transform: uppercase;
+				transition: all 0.3s;
+			}
+
+			.prev-btn:hover,
+			.next-btn:hover {
+				background-color: white;
+				color: #230a5a;
+				box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+			}
+
+			.next-btn[disabled],
+			.finish-btn[disabled] {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+
+			/* Pixel calendar */
+			.pixel-calendar {
+				width: 120px;
+				height: 120px;
+				margin: 0 auto 40px;
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.calendar-page {
+				width: 80px;
+				height: 80px;
+				background-color: white;
+				border-radius: 5px;
+				position: relative;
+				margin-bottom: 4px;
+			}
+
+			.calendar-top {
+				width: 80px;
+				height: 20px;
+				background-color: #a090ff;
+				border-radius: 5px 5px 0 0;
+			}
+
+			.calendar-day {
+				font-family: "Press Start 2P", cursive;
+				font-size: 20px;
+				color: #230a5a;
+				position: absolute;
+				top: 30px;
+				width: 100%;
+				text-align: center;
+			}
+
+			.calendar-ring {
+				width: 10px;
+				height: 10px;
+				background-color: #ff5252;
+				border-radius: 50%;
+				margin-bottom: 2px;
+			}
+
+			/* Responsive */
+			@media (max-width: 768px) {
+				.question-text {
+					font-size: 20px;
+				}
+
+				.question-section {
+					padding: 30px 20px;
+				}
+
+				.duration-grid {
+					flex-wrap: wrap;
+				}
+
+				.duration-card {
+					min-width: 45%;
+					max-width: 45%;
+				}
+
+				.navigation-buttons {
+					flex-direction: column;
+					gap: 20px;
+				}
+
+				.prev-btn,
+				.finish-btn {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="content">
+				<div id="navbar"></div>
+
+				<div class="quiz-container">
+					<header class="quiz-header">
+						<h1 class="quiz-title">Travel Planning Quiz</h1>
+						<p class="quiz-description">
+							Answer a few questions and our AI will create a personalized
+							travel itinerary just for you.
+						</p>
+					</header>
+
+					<div class="progress-bar">
+						<div class="progress-fill"></div>
+					</div>
+
+					<div class="question-section">
+						<div class="pixel-calendar">
+							<div class="calendar-ring"></div>
+							<div class="calendar-page">
+								<div class="calendar-top"></div>
+								<div class="calendar-day">?</div>
+							</div>
+						</div>
+
+						<div class="question-number">QUESTION 2 OF 5</div>
+						<h2 class="question-text">How long will you be traveling?</h2>
+						<p class="question-instruction">Select the duration of your trip</p>
+
+						<div class="duration-grid">
+							<!-- Weekend -->
+							<div class="duration-card" data-duration="weekend">
+								<div class="selection-indicator">✓</div>
+								<div class="duration-icon">🏙️</div>
+								<h3 class="duration-title">Weekend</h3>
+								<p class="duration-days">2-3 days</p>
+								<p class="duration-description">
+									A quick getaway to recharge and explore a nearby destination.
+								</p>
+							</div>
+
+							<!-- Short Trip -->
+							<div class="duration-card" data-duration="short">
+								<div class="selection-indicator">✓</div>
+								<div class="duration-icon">✈️</div>
+								<h3 class="duration-title">Short Trip</h3>
+								<p class="duration-days">4-6 days</p>
+								<p class="duration-description">
+									Enough time to see major attractions and get a taste of the
+									culture.
+								</p>
+							</div>
+
+							<!-- Standard Vacation -->
+							<div class="duration-card" data-duration="standard">
+								<div class="selection-indicator">✓</div>
+								<div class="duration-icon">🏝️</div>
+								<h3 class="duration-title">Standard</h3>
+								<p class="duration-days">7-13 days</p>
+								<p class="duration-description">
+									Time to explore thoroughly and include a variety of
+									experiences.
+								</p>
+							</div>
+
+							<!-- Extended Trip -->
+							<div class="duration-card" data-duration="extended">
+								<div class="selection-indicator">✓</div>
+								<div class="duration-icon">🌎</div>
+								<h3 class="duration-title">Extended</h3>
+								<p class="duration-days">14+ days</p>
+								<p class="duration-description">
+									In-depth exploration with time to venture beyond typical
+									tourist areas.
+								</p>
+							</div>
+						</div>
+
+						<div class="custom-duration">
+							<button class="custom-duration-toggle" id="customDurationToggle">
+								I have a specific number of days in mind
+							</button>
+
+							<div class="custom-duration-input" id="customDurationInput">
+								<div class="days-input-container">
+									<input
+										type="number"
+										min="1"
+										max="90"
+										class="days-input"
+										id="daysInput"
+										placeholder="14"
+									/>
+									<span class="days-label">days</span>
+								</div>
+								<button class="apply-duration-btn" id="applyDurationBtn">
+									Apply
+								</button>
+							</div>
+						</div>
+
+						<div class="selection-summary" id="selectionSummary"></div>
+
+						<div class="navigation-buttons">
+							<button class="prev-btn" id="prevBtn">← Previous</button>
+							<button class="next-btn" id="nextBtn" disabled>
+								Next Question →
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// DOM elements
+			const durationCards = document.querySelectorAll(".duration-card");
+			const customDurationToggle = document.getElementById(
+				"customDurationToggle"
+			);
+			const customDurationInput = document.getElementById(
+				"customDurationInput"
+			);
+			const daysInput = document.getElementById("daysInput");
+			const applyDurationBtn = document.getElementById("applyDurationBtn");
+			const prevBtn = document.getElementById("prevBtn");
+			const finishBtn = document.getElementById("finishBtn");
+			const selectionSummary = document.getElementById("selectionSummary");
+			const calendarDay = document.querySelector(".calendar-day");
+
+			// Track selected duration
+			let selectedDuration = null;
+			let customDays = null;
+			let isCustomDurationVisible = false;
+
+			// Define duration types with helper text for the summary
+			const durationTypes = {
+				weekend: "Weekend Trip (2-3 days)",
+				short: "Short Trip (4-6 days)",
+				standard: "Standard Vacation (7-13 days)",
+				extended: "Extended Trip (14+ days)",
+			};
+
+			// Card selection
+			durationCards.forEach((card) => {
+				// Show checkmarks on hover
+				card.addEventListener("mouseenter", function () {
+					if (this.getAttribute("data-duration") !== selectedDuration) {
+						this.querySelector(".selection-indicator").style.opacity = "0.5";
+					}
+				});
+
+				card.addEventListener("mouseleave", function () {
+					if (this.getAttribute("data-duration") !== selectedDuration) {
+						this.querySelector(".selection-indicator").style.opacity = "0";
+					}
+				});
+
+				// Handle selection
+				card.addEventListener("click", function () {
+					// Clear custom duration if visible
+					if (isCustomDurationVisible) {
+						customDurationInput.classList.remove("visible");
+						isCustomDurationVisible = false;
+						daysInput.value = "";
+						customDays = null;
+					}
+
+					// Clear previous selection
+					durationCards.forEach((c) => {
+						c.classList.remove("selected");
+						c.querySelector(".selection-indicator").style.opacity = "0";
+					});
+
+					// Select this card
+					this.classList.add("selected");
+					this.querySelector(".selection-indicator").style.opacity = "1";
+					selectedDuration = this.getAttribute("data-duration");
+
+					// Update calendar display
+					updateCalendarDisplay(selectedDuration);
+
+					// Update selection summary
+					updateSelectionSummary();
+
+					// Enable finish button
+					nextBtn.disabled = false;
+				});
+			});
+
+			// Toggle custom duration input
+			customDurationToggle.addEventListener("click", function () {
+				isCustomDurationVisible = !isCustomDurationVisible;
+				customDurationInput.classList.toggle(
+					"visible",
+					isCustomDurationVisible
+				);
+
+				// If showing custom input, clear card selection
+				if (isCustomDurationVisible) {
+					durationCards.forEach((c) => {
+						c.classList.remove("selected");
+						c.querySelector(".selection-indicator").style.opacity = "0";
+					});
+					selectedDuration = null;
+					nextBtn.disabled = true;
+				}
+			});
+
+			// Apply custom duration
+			applyDurationBtn.addEventListener("click", function () {
+				const days = parseInt(daysInput.value);
+
+				if (days && days > 0) {
+					customDays = days;
+
+					// Determine which category this falls into
+					if (days <= 3) {
+						selectedDuration = "weekend";
+					} else if (days <= 6) {
+						selectedDuration = "short";
+					} else if (days <= 13) {
+						selectedDuration = "standard";
+					} else {
+						selectedDuration = "extended";
+					}
+
+					// Update calendar display
+					updateCalendarDisplay(selectedDuration, customDays);
+
+					// Update selection summary
+					updateSelectionSummary(customDays);
+
+					// Enable finish button
+					nextBtn.disabled = false;
+				}
+			});
+
+			function updateCalendarDisplay(durationType, specificDays = null) {
+				if (specificDays) {
+					calendarDay.textContent = specificDays;
+				} else {
+					// Show a representative number for each duration type
+					const dayMapping = {
+						weekend: "3",
+						short: "5",
+						standard: "10",
+						extended: "14+",
+					};
+					calendarDay.textContent = dayMapping[durationType] || "?";
+				}
+			}
+
+			function updateSelectionSummary(specificDays = null) {
+				if (selectedDuration) {
+					if (specificDays) {
+						selectionSummary.textContent = `${specificDays} days (${
+							durationTypes[selectedDuration].split(" ")[0]
+						})`;
+					} else {
+						selectionSummary.textContent = durationTypes[selectedDuration];
+					}
+				} else {
+					selectionSummary.textContent = "";
+				}
+			}
+
+			// Previous button handler
+			prevBtn.addEventListener("click", function () {
+				window.location.href = "when.html";
+			});
+
+			// Finish button handler
+			nextBtn.addEventListener("click", function () {
+				if (selectedDuration) {
+					// Save selection
+					localStorage.setItem("selectedDuration", selectedDuration);
+					if (customDays) {
+						localStorage.setItem("customDurationDays", customDays);
+						localStorage.setItem(
+							"selectedDurationText",
+							`${customDays} days (${
+								durationTypes[selectedDuration].split(" ")[0]
+							})`
+						);
+					} else {
+						localStorage.setItem(
+							"selectedDurationText",
+							durationTypes[selectedDuration]
+						);
+					}
+
+					window.location.href = "who.html";
+				}
+			});
+
+			// Hide checkmarks initially
+			document.querySelectorAll(".selection-indicator").forEach((indicator) => {
+				indicator.style.opacity = "0";
+			});
+		</script>
+	</body>
+</html>
