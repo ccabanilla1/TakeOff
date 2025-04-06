@@ -31,7 +31,7 @@
 				</div>
 
 				<div
-					class="calendar-preview"
+					class="calendar-wrapper"
 					id="calendar-preview"
 					style="display: none"
 				>
@@ -90,16 +90,17 @@
 				getQuizData() {
 					return {
 						destination:
-							localStorage.getItem("selectedDestination") || "Barcelona",
+							localStorage.getItem("selectedDestination") || "Hong Kong, China",
 						timeframe:
-							localStorage.getItem("selectedTimeframe") || "June 20-23, 2024",
+							localStorage.getItem("selectedTimeframe") || "May 6-9, 2025",
 						companion:
-							localStorage.getItem("selectedCompanionText") || "Solo travel",
+							localStorage.getItem("selectedCompanionText") ||
+							"Traveling as a couple",
 						styles:
-							localStorage.getItem("selectedStylesText") || "Adventure Travel",
+							localStorage.getItem("selectedStylesText") ||
+							"Adventure, cultural and foodie",
 						budget:
-							localStorage.getItem("selectedBudgetText") ||
-							"Mid-Range ($$-$$$)",
+							localStorage.getItem("selectedBudgetText") || "Flexible Budget",
 						duration: localStorage.getItem("selectedDurationText") || "4 days",
 					};
 				}
@@ -149,7 +150,7 @@
 
 						// Hide loading and show itinerary
 						document.getElementById("loading-container").style.display = "none";
-						document.getElementById("calendar-preview").style.display = "grid";
+						document.getElementById("calendar-preview").style.display = "block";
 
 						// Render the calendar
 						this.renderCalendar();
@@ -173,14 +174,14 @@
 
 					// Create date range for the trip
 					const dates = [];
-					const startDate = new Date();
-					startDate.setDate(startDate.getDate() + 30); // Mock start date one month from now
+					const startDate = new Date(2025, 4, 6); // May 6, 2025
 
 					for (let i = 0; i < duration; i++) {
 						const currentDate = new Date(startDate);
 						currentDate.setDate(startDate.getDate() + i);
 						dates.push(
 							currentDate.toLocaleDateString("en-US", {
+								weekday: "short",
 								month: "long",
 								day: "numeric",
 								year: "numeric",
@@ -201,102 +202,128 @@
 					// Generate activities based on preferences
 					this.tripEvents = [];
 
-					// First day always has arrival
+					// Day 1
 					this.tripEvents.push({
 						day: 0,
 						events: [
 							{
 								id: this.generateId(),
-								time: "09:00",
-								title: `Arrival in ${this.quizData.destination}`,
-								description: `Check in to your ${
-									isLuxury ? "luxury" : "comfortable"
-								} accommodation`,
-							},
-							{
-								id: this.generateId(),
-								time: "13:00",
-								title: `${this.quizData.destination} Orientation`,
-								description: "Get familiar with the local area and grab lunch",
-							},
-							{
-								id: this.generateId(),
-								time: "16:00",
-								title: isAdventure ? "Sunset Kayaking" : "City Walking Tour",
+								time: "10:00",
+								title: "Arrival in Hong Kong",
 								description:
-									"Start your trip with a memorable first-day experience",
+									"Arrive at Hong Kong International Airport and transfer to your hotel in Central.",
+							},
+							{
+								id: this.generateId(),
+								time: "12:00",
+								title: "Lunch at Mak's Noodle",
+								description:
+									"Try the world-famous wonton noodles at this iconic eatery in Central.",
+							},
+							{
+								id: this.generateId(),
+								time: "14:00",
+								title: "Explore Victoria Peak",
+								description:
+									"Take the Peak Tram to enjoy stunning views of the harbor and skyline. Walk around the Peak Circle Walk.",
+							},
+							{
+								id: this.generateId(),
+								time: "17:00",
+								title: "Dinner at Jumbo Floating Restaurant",
+								description:
+									"Enjoy dinner at this famous floating restaurant in Aberdeen, savoring delicious Cantonese food.",
 							},
 						],
 					});
 
-					// Middle days with activities based on preferences
-					for (let i = 1; i < duration - 1; i++) {
-						const dayEvents = [];
-
-						// Morning activity
-						dayEvents.push({
-							id: this.generateId(),
-							time: "09:00",
-							title: isCultural
-								? "Cultural Heritage Tour"
-								: "Breakfast at Local Cafe",
-							description: isCultural
-								? "Explore local museums and historic sites"
-								: "Start your day with authentic local cuisine",
-						});
-
-						// Afternoon activity
-						dayEvents.push({
-							id: this.generateId(),
-							time: "13:00",
-							title: isAdventure
-								? "Mountain Hiking"
-								: "Shopping District Visit",
-							description: isAdventure
-								? "Experience the natural beauty of the region"
-								: "Explore local markets and boutiques",
-						});
-
-						// Evening activity
-						dayEvents.push({
-							id: this.generateId(),
-							time: "19:00",
-							title: isLuxury ? "Fine Dining Experience" : "Local Food Tour",
-							description: "Enjoy the culinary delights of the region",
-						});
-
-						this.tripEvents.push({
-							day: i,
-							events: dayEvents,
-						});
-					}
-
-					// Last day always has departure
+					// Day 2
 					this.tripEvents.push({
-						day: duration - 1,
+						day: 1,
 						events: [
 							{
 								id: this.generateId(),
-								time: "10:00",
-								title: isAdventure
-									? "Last Adventure Activity"
-									: "Souvenir Shopping",
-								description: "Make the most of your final day",
+								time: "09:00",
+								title: "Wong Tai Sin Temple",
+								description:
+									"Visit this famous temple known for making every wish come true. Watch traditional fortune telling.",
+							},
+							{
+								id: this.generateId(),
+								time: "12:30",
+								title: "Dim Sum Experience",
+								description:
+									"Enjoy authentic dim sum at Lin Heung Tea House, one of the oldest teahouses in Hong Kong.",
 							},
 							{
 								id: this.generateId(),
 								time: "15:00",
-								title: "Departure Preparation",
-								description: "Pack up and prepare for departure",
-							},
-							{
-								id: this.generateId(),
-								time: "18:00",
-								title: `Departure from ${this.quizData.destination}`,
-								description: "Safe travels home!",
+								title: "Shopping in Mong Kok",
+								description:
+									"Explore the vibrant markets of Mong Kok including Ladies Market and Sneaker Street.",
 							},
 						],
 					});
+
+					// Day 3
+					this.tripEvents.push({
+						day: 2,
+						events: [
+							{
+								id: this.generateId(),
+								time: "08:30",
+								title: "Dragon's Back Hike",
+								description:
+									"Embark on the famous Dragon's Back trail, consistently rated as Hong Kong's best urban hike.",
+							},
+							{
+								id: this.generateId(),
+								time: "13:00",
+								title: "Beach Time at Shek O",
+								description:
+									"Relax at Shek O beach after your hike and enjoy lunch at one of the local seafood restaurants.",
+							},
+							{
+								id: this.generateId(),
+								time: "19:00",
+								title: "Temple Street Night Market",
+								description:
+									"Experience the vibrant night market with street food, fortune tellers, and local goods.",
+							},
+						],
+					});
+
+					// Day 4
+					this.tripEvents.push({
+						day: 3,
+						events: [
+							{
+								id: this.generateId(),
+								time: "09:00",
+								title: "Ngong Ping 360 & Big Buddha",
+								description:
+									"Take the cable car to see the famous Tian Tan Buddha and Po Lin Monastery on Lantau Island.",
+							},
+							{
+								id: this.generateId(),
+								time: "14:00",
+								title: "Star Ferry Ride",
+								description:
+									"Cross Victoria Harbour on the iconic Star Ferry for spectacular city views.",
+							},
+							{
+								id: this.generateId(),
+								time: "16:00",
+								title: "Farewell Dinner",
+								description:
+									"Enjoy a final meal at a rooftop restaurant with panoramic views of Hong Kong's skyline.",
+							},
+						],
+					});
+
+					// Hide loading and show itinerary
+					document.getElementById("loading-container").style.display = "none";
+					document.getElementById("calendar-preview").style.display = "block";
 
 					// Render the calendar
 					this.renderCalendar();
@@ -405,31 +432,37 @@
 					// Sort trip events by day
 					this.tripEvents.sort((a, b) => a.day - b.day);
 
+					// Generate dates for the trip
+					const dates = [];
+					const startDate = new Date(2025, 4, 6); // May 6, 2025
+					const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+					for (let i = 0; i < this.tripEvents.length; i++) {
+						const currentDate = new Date(startDate);
+						currentDate.setDate(startDate.getDate() + i);
+						const dayName = weekdays[currentDate.getDay()];
+						dates.push({
+							dayName: dayName,
+							formattedDate: currentDate.toLocaleDateString("en-US", {
+								month: "long",
+								day: "numeric",
+								year: "numeric",
+							}),
+						});
+					}
+
 					this.tripEvents.forEach((dayData, dayIndex) => {
-						const dayColumn = document.createElement("div");
-						dayColumn.classList.add("day-column");
+						const dayCard = document.createElement("div");
+						dayCard.classList.add("day-card");
 
 						// Create day header
-						const dateHeader = document.createElement("div");
-						dateHeader.classList.add("day-header");
-						const dates = [];
-						const startDate = new Date();
-						startDate.setDate(startDate.getDate() + 30);
-
-						for (let i = 0; i < this.tripEvents.length; i++) {
-							const currentDate = new Date(startDate);
-							currentDate.setDate(startDate.getDate() + i);
-							dates.push(
-								currentDate.toLocaleDateString("en-US", {
-									month: "long",
-									day: "numeric",
-									year: "numeric",
-								})
-							);
-						}
-
-						dateHeader.textContent = dates[dayData.day];
-						dayColumn.appendChild(dateHeader);
+						const dayHeader = document.createElement("div");
+						dayHeader.classList.add("day-header");
+						dayHeader.innerHTML = `
+							<span class="day-name">${dates[dayData.day].dayName},</span> 
+							<span class="day-date">${dates[dayData.day].formattedDate}</span>
+						`;
+						dayCard.appendChild(dayHeader);
 
 						// Sort events by time
 						dayData.events.sort((a, b) => a.time.localeCompare(b.time));
@@ -438,31 +471,41 @@
 						dayData.events.forEach((event) => {
 							const eventCard = document.createElement("div");
 							eventCard.classList.add("event-card");
+
 							eventCard.innerHTML = `
-                            <div class="event-time">${event.time}</div>
-                            <div class="event-title">${event.title}</div>
-                            <div class="event-description">${event.description}</div>
-                            <div class="event-actions">
-                                <button class="edit-event-btn" data-id="${event.id}">Edit</button>
-                                <button class="delete-event-btn" data-id="${event.id}">Delete</button>
-                            </div>
-                        `;
+								<div class="event-time-column">
+									<div class="event-time">${event.time}</div>
+									<div class="time-line"></div>
+								</div>
+								<div class="event-content">
+									<div class="event-title">${event.title}</div>
+									<div class="event-description">${event.description}</div>
+									<div class="event-actions">
+										<button class="btn-edit" data-id="${event.id}">
+											<span class="pixel-icon">✎</span> Edit
+										</button>
+										<button class="btn-delete" data-id="${event.id}">
+											<span class="pixel-icon">✕</span> Delete
+										</button>
+									</div>
+								</div>
+							`;
 
 							// Add event listeners for edit and delete
-							const editBtn = eventCard.querySelector(".edit-event-btn");
+							const editBtn = eventCard.querySelector(".btn-edit");
 							editBtn.addEventListener("click", () =>
 								this.editEvent(event, dayIndex)
 							);
 
-							const deleteBtn = eventCard.querySelector(".delete-event-btn");
+							const deleteBtn = eventCard.querySelector(".btn-delete");
 							deleteBtn.addEventListener("click", () =>
 								this.deleteEvent(event, dayIndex)
 							);
 
-							dayColumn.appendChild(eventCard);
+							dayCard.appendChild(eventCard);
 						});
 
-						calendarPreview.appendChild(dayColumn);
+						calendarPreview.appendChild(dayCard);
 					});
 				}
 
@@ -491,22 +534,52 @@
 			});
 		</script>
 		<style>
+			:root {
+				--primary-color: #a090ff;
+				--secondary-color: #ff6bcb;
+				--dark-bg: #140a32;
+				--panel-bg: rgba(20, 10, 50, 0.8);
+				--event-bg: #4a3e5e;
+				--text-color: #ffffff;
+				--soft-text: #a0a0a0;
+				--highlight: #ff9c4a;
+				--border-color: #6c5ce7;
+			}
+
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				background-color: var(--dark-bg);
+				color: var(--text-color);
+				font-family: "Press Start 2P", cursive;
+				font-size: 14px;
+				line-height: 1.6;
+			}
+
+			h1 {
+				font-size: 32px;
+				margin-bottom: 15px;
+				text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+			}
+
 			.itinerary-header {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				margin-bottom: 20px;
-				margin-left: 20px;
+				padding: 20px;
 				font-size: small;
 			}
 
-			.calendar-preview {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-				gap: 15px;
-				background-color: var(--background-light);
+			.calendar-wrapper {
 				padding: 20px;
 				border-radius: 8px;
+				background-color: rgba(0, 0, 0, 0.3);
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 			}
 
 			#loading-container {
@@ -520,9 +593,10 @@
 			.pixel-loader {
 				width: 40px;
 				height: 40px;
-				background-color: #a090ff;
+				background-color: var(--primary-color);
 				margin-bottom: 20px;
 				animation: pixelPulse 1.5s infinite ease-in-out;
+				box-shadow: 0 0 15px var(--primary-color);
 			}
 
 			@keyframes pixelPulse {
@@ -539,81 +613,163 @@
 
 			.loading-text {
 				font-family: "Press Start 2P", cursive;
-				color: #a090ff;
+				color: var(--primary-color);
 				font-size: 16px;
 			}
 
-			.day-column {
-				background-color: rgba(20, 10, 50, 0.8);
-				border: 3px solid #a090ff;
-				border-radius: 20px;
+			.day-card {
+				background-color: var(--panel-bg);
+				border: 3px solid var(--primary-color);
+				border-radius: 10px;
 				padding: 0;
-				cursor: pointer;
-				transition: all 0.3s;
+				margin-bottom: 25px;
 				overflow: hidden;
-				position: relative;
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 			}
 
 			.day-header {
-				font-weight: 600;
-				margin-bottom: 10px;
-				padding-bottom: 5px;
-				padding-top: 20px;
-				padding-left: 20px;
-				border-bottom: 2px solid var(--primary-color);
+				font-weight: 700;
+				padding: 15px 20px;
+				border-bottom: 3px solid var(--primary-color);
+				background-color: rgba(160, 144, 255, 0.2);
+				letter-spacing: 1px;
+				display: flex;
+				align-items: center;
+			}
+
+			.day-name {
+				color: var(--secondary-color);
+				margin-right: 6px;
 			}
 
 			.event-card {
-				background-color: #4a3e5e;
-				border-left: 4px solid var(--primary-color);
-				padding: 10px;
-				margin-bottom: 20px;
-				border-radius: 4px;
+				display: flex;
+				padding: 15px 20px;
+				margin: 15px;
 				position: relative;
-				margin-left: 20px;
-				margin-right: 20px;
+				background-color: var(--event-bg);
+				border-radius: 8px;
+				border-left: 5px solid var(--primary-color);
+				box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+				transition: all 0.2s ease;
+			}
+
+			.event-card:hover {
+				transform: translateY(-2px);
+				box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+			}
+
+			.event-time-column {
+				flex: 0 0 80px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
 			}
 
 			.event-time {
-				font-weight: 500;
-				color: #c0c0c0;
-				margin-bottom: 5px;
+				font-weight: bold;
+				color: var(--secondary-color);
+				margin-bottom: 10px;
+				font-size: 0.9em;
+				text-align: center;
+				background-color: rgba(0, 0, 0, 0.2);
+				padding: 5px 8px;
+				border-radius: 4px;
+				border: 1px solid rgba(255, 107, 203, 0.3);
+			}
+
+			.time-line {
+				flex-grow: 1;
+				width: 2px;
+				background-color: var(--primary-color);
+				margin: 5px 0;
+			}
+
+			.event-content {
+				flex: 1;
+				padding-left: 15px;
 			}
 
 			.event-title {
-				font-weight: 600;
+				font-weight: 700;
+				margin-bottom: 8px;
+				color: #ffffff;
+				font-size: 1.1em;
 			}
 
 			.event-description {
-				font-size: 0.9em;
-				color: #a0a0a0;
-				margin-top: 5px;
+				font-size: 0.85em;
+				color: var(--soft-text);
+				margin-bottom: 15px;
+				line-height: 1.5;
+				font-family: Arial, sans-serif;
 			}
 
 			.event-actions {
 				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-top: 10px;
+				justify-content: flex-end;
+				gap: 15px;
 			}
 
-			.edit-event-btn,
-			.delete-event-btn {
+			.pixel-icon {
+				margin-right: 5px;
+				display: inline-block;
+			}
+
+			.btn-edit,
+			.btn-delete {
 				background: none;
-				border: none;
-				color: var(--primary-color);
+				border: 2px solid;
+				padding: 6px 12px;
+				border-radius: 4px;
 				cursor: pointer;
-				font-size: 0.9em;
+				font-size: 0.75em;
+				transition: all 0.2s;
+				display: inline-flex;
+				align-items: center;
+				font-family: "Press Start 2P", cursive;
+			}
+
+			.btn-edit {
+				color: var(--primary-color);
+				border-color: var(--primary-color);
+			}
+
+			.btn-edit:hover {
+				background-color: rgba(160, 144, 255, 0.2);
+				box-shadow: 0 0 10px rgba(160, 144, 255, 0.5);
+			}
+
+			.btn-delete {
+				color: var(--secondary-color);
+				border-color: var(--secondary-color);
+			}
+
+			.btn-delete:hover {
+				background-color: rgba(255, 107, 203, 0.2);
+				box-shadow: 0 0 10px rgba(255, 107, 203, 0.5);
 			}
 
 			.add-event-btn {
-				background-color: var(--primary-color);
-				color: white;
-				border: none;
+				background-color: var(--highlight);
+				color: var(--dark-bg);
+				border: 3px solid #ff7b00;
 				padding: 10px 15px;
 				border-radius: 4px;
 				cursor: pointer;
-				margin-top: 15px;
+				font-family: "Press Start 2P", cursive;
+				transition: all 0.2s;
+				box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+			}
+
+			.add-event-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.4);
+			}
+
+			.add-event-btn:active {
+				transform: translateY(1px);
+				box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
 			}
 
 			.modal {
@@ -623,19 +779,29 @@
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-color: rgba(0, 0, 0, 0.5);
+				background-color: rgba(0, 0, 0, 0.7);
 				z-index: 1000;
 				justify-content: center;
 				align-items: center;
+				backdrop-filter: blur(4px);
 			}
 
 			.modal-content {
-				background-color: white;
+				background-color: var(--panel-bg);
 				padding: 25px;
 				border-radius: 8px;
 				width: 500px;
 				max-width: 90%;
-				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+				border: 3px solid var(--primary-color);
+				box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+			}
+
+			.modal-content h2 {
+				color: var(--secondary-color);
+				margin-bottom: 20px;
+				font-size: 1.2em;
+				text-align: center;
+				text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 			}
 
 			.modal-form {
@@ -648,14 +814,83 @@
 			.modal-form select {
 				width: 100%;
 				padding: 10px;
-				border: 1px solid var(--border-color);
+				background-color: rgba(0, 0, 0, 0.3);
+				border: 2px solid var(--border-color);
 				border-radius: 4px;
+				color: white;
+				font-family: Arial, sans-serif;
+			}
+
+			.modal-form input:focus,
+			.modal-form textarea:focus,
+			.modal-form select:focus {
+				outline: none;
+				border-color: var(--secondary-color);
+				box-shadow: 0 0 8px var(--secondary-color);
+			}
+
+			.modal-form textarea {
+				min-height: 100px;
+				resize: vertical;
 			}
 
 			.modal-actions {
 				display: flex;
 				justify-content: space-between;
 				margin-top: 20px;
+			}
+
+			#save-event-btn,
+			#cancel-event-btn {
+				padding: 10px 20px;
+				border-radius: 4px;
+				cursor: pointer;
+				font-family: "Press Start 2P", cursive;
+				font-size: 0.8em;
+				transition: all 0.2s;
+			}
+
+			#save-event-btn {
+				background-color: var(--highlight);
+				color: var(--dark-bg);
+				border: 2px solid #ff7b00;
+			}
+
+			#save-event-btn:hover {
+				background-color: #ffb347;
+				transform: translateY(-2px);
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+			}
+
+			#cancel-event-btn {
+				background-color: transparent;
+				color: var(--soft-text);
+				border: 2px solid var(--soft-text);
+			}
+
+			#cancel-event-btn:hover {
+				color: white;
+				border-color: white;
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+
+			@media (max-width: 768px) {
+				.event-card {
+					flex-direction: column;
+				}
+
+				.event-time-column {
+					flex-direction: row;
+					margin-bottom: 10px;
+				}
+
+				.time-line {
+					display: none;
+				}
+
+				.event-content {
+					padding-left: 0;
+				}
 			}
 		</style>
 	</body>
