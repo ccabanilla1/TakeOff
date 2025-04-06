@@ -63,4 +63,12 @@ document.addEventListener("DOMContentLoaded", function () {
       </ul>
     </nav>
   `;
+	// main.js or another linked file
+	fetch("https://takeoff-6gky.onrender.com/api/test")
+		.then((res) => res.json())
+		.then((data) => {
+			console.log("Data from backend:", data);
+			// You can now use this data to update the UI or whatever you want
+		})
+		.catch((err) => console.error("Error:", err));
 });

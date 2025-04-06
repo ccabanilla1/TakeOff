@@ -75,6 +75,10 @@ app.post("/api/generate-itinerary", async (req, res) => {
 	}
 });
 
+app.get("/api/test", (req, res) => {
+	res.json({ message: "Hello from Render backend!" });
+});
+
 // Start server
 app.listen(port, () => {
 	console.log(`Server running on port ${port}`);

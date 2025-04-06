@@ -192,6 +192,7 @@
 					const destination = this.innerText
 						.replace("Explore ", "")
 						.replace(" →", "");
+					localStorage.setItem("selectedDestination", destination);
 					window.location.href = "quiz/when.html";
 				});
 			});
