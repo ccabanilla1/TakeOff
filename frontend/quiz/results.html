@@ -330,9 +330,12 @@
 				}
 
 				generateId() {
-					return (
-						Date.now().toString() + Math.random().toString(36).substr(2, 9)
-					);
+					// Create a more distinct ID to ensure uniqueness
+					const timestamp = Date.now();
+					const randomPart = Math.random().toString(36).substring(2, 11);
+					const id = `event_${timestamp}_${randomPart}`;
+					console.log("Generated new ID:", id);
+					return id;
 				}
 
 				initEventListeners() {
@@ -358,22 +361,57 @@
 				openEventModal(eventToEdit = null) {
 					const modal = document.getElementById("event-modal");
 					const modalTitle = document.getElementById("modal-title");
-					const saveButton = document.getElementById("save-event-btn");
+					const daySelect = document.getElementById("event-day");
 
 					// Reset form
 					document.getElementById("event-form").reset();
+
+					// Populate day selector
+					daySelect.innerHTML = '<option value="">Select Day</option>';
+
+					// Get the dates for the duration of the trip
+					const startDate = new Date(2025, 4, 6); // May 6, 2025
+					const duration =
+						parseInt(this.quizData.duration.match(/\d+/)[0]) || 4;
+
+					// Add options for each day in the trip
+					for (let i = 0; i < duration; i++) {
+						const currentDate = new Date(startDate);
+						currentDate.setDate(startDate.getDate() + i);
+
+						const dateString = currentDate.toLocaleDateString("en-US", {
+							weekday: "short",
+							month: "long",
+							day: "numeric",
+							year: "numeric",
+						});
+
+						const option = document.createElement("option");
+						option.value = i; // Use the day index as value
+						option.textContent = dateString;
+						daySelect.appendChild(option);
+					}
 
 					if (eventToEdit) {
 						// Editing existing event
 						modalTitle.textContent = "Edit Event";
 						document.getElementById("event-title").value = eventToEdit.title;
-						document.getElementById("event-day").value = eventToEdit.dayIndex;
 						document.getElementById("event-time").value = eventToEdit.time;
 						document.getElementById("event-description").value =
 							eventToEdit.description;
 
 						// Store the event ID for update
 						this.editingEventId = eventToEdit.id;
+
+						// Explicitly select the correct day
+						for (let i = 0; i < daySelect.options.length; i++) {
+							if (
+								parseInt(daySelect.options[i].value) === eventToEdit.dayIndex
+							) {
+								daySelect.selectedIndex = i;
+								break;
+							}
+						}
 					} else {
 						// Adding new event
 						modalTitle.textContent = "Add New Event";
@@ -389,7 +427,7 @@
 
 				saveEvent() {
 					const title = document.getElementById("event-title").value;
-					const day = document.getElementById("event-day").value;
+					const dayValue = parseInt(document.getElementById("event-day").value);
 					const time = document.getElementById("event-time").value;
 					const description =
 						document.getElementById("event-description").value;
@@ -401,23 +439,28 @@
 						description,
 					};
 
-					// Find or create the day in tripEvents
-					let dayEvents = this.tripEvents.find((d) => d.day === parseInt(day));
-					if (!dayEvents) {
-						dayEvents = { day: parseInt(day), events: [] };
-						this.tripEvents.push(dayEvents);
+					// Find the day object with the matching day property
+					let dayObject = this.tripEvents.find((day) => day.day === dayValue);
+
+					// If day doesn't exist, create it
+					if (!dayObject) {
+						dayObject = { day: dayValue, events: [] };
+						this.tripEvents.push(dayObject);
 					}
 
 					// Update or add event
 					if (this.editingEventId) {
-						const index = dayEvents.events.findIndex(
-							(e) => e.id === this.editingEventId
-						);
-						if (index !== -1) {
-							dayEvents.events[index] = newEvent;
-						}
+						// First, remove the event from any day it might be in
+						this.tripEvents.forEach((day) => {
+							day.events = day.events.filter(
+								(e) => e.id !== this.editingEventId
+							);
+						});
+
+						// Then add it to the selected day
+						dayObject.events.push(newEvent);
 					} else {
-						dayEvents.events.push(newEvent);
+						dayObject.events.push(newEvent);
 					}
 
 					// Re-render calendar and close modal
@@ -478,6 +521,7 @@
 							dayData.events.forEach((event) => {
 								const eventCard = document.createElement("div");
 								eventCard.classList.add("event-card");
+								eventCard.dataset.eventId = event.id; // Store event ID as data attribute
 
 								eventCard.innerHTML = `
                         <div class="event-time-column">
@@ -498,11 +542,13 @@
                         </div>
                     `;
 
+								// Add edit button event listener
 								const editBtn = eventCard.querySelector(".btn-edit");
 								editBtn.addEventListener("click", () =>
 									this.editEvent(event, dayData.day)
 								);
 
+								// Add delete button event listener
 								const deleteBtn = eventCard.querySelector(".btn-delete");
 								deleteBtn.addEventListener("click", () =>
 									this.deleteEvent(event, dayData.day)
@@ -528,14 +574,46 @@
 				}
 
 				deleteEvent(eventToDelete, dayIndex) {
-					// Remove the event from the corresponding day
-					const dayEvents = this.tripEvents[dayIndex];
-					dayEvents.events = dayEvents.events.filter(
-						(event) => event.id !== eventToDelete.id
-					);
+					// Log the event to be deleted for debugging
+					console.log("Deleting event:", eventToDelete);
+					console.log("Event ID to delete:", eventToDelete.id);
 
-					// Re-render calendar
-					this.renderCalendar();
+					// Find the day object with the matching day property
+					const dayObject = this.tripEvents.find((day) => day.day === dayIndex);
+
+					if (dayObject && eventToDelete) {
+						console.log(
+							"Before deletion - events count:",
+							dayObject.events.length
+						);
+						console.log(
+							"Events before deletion:",
+							JSON.stringify(dayObject.events)
+						);
+
+						// Get the event index by ID
+						const eventIndex = dayObject.events.findIndex(
+							(e) => e.id === eventToDelete.id
+						);
+
+						if (eventIndex !== -1) {
+							// Remove the event using splice for more direct control
+							dayObject.events.splice(eventIndex, 1);
+							console.log("Event found and removed at index:", eventIndex);
+						} else {
+							console.log("Event not found with ID:", eventToDelete.id);
+						}
+
+						console.log(
+							"After deletion - events count:",
+							dayObject.events.length
+						);
+
+						// Re-render calendar
+						this.renderCalendar();
+					} else {
+						console.error("Day object or event to delete not found");
+					}
 				}
 			}
 

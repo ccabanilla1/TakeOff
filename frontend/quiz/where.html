@@ -58,9 +58,7 @@
 						</div>
 
 						<button class="next-btn" id="nextBtn" disabled>Next →</button>
-						<button class="not-sure-btn" id="notSureBtn">
-							I'm not sure yet
-						</button>
+						<button class="not-sure-btn" id="notSureBtn">Surprise Me!</button>
 					</div>
 				</div>
 			</div>
@@ -218,18 +216,17 @@
 					// Save the destination and proceed to the next question
 					localStorage.setItem("selectedDestination", destination);
 
-					// In a real implementation, you would redirect to the next question page
-					window.location.href = "when.html";
+					window.location.href = "length.html";
 				}
 			});
 
 			// Not sure button handler
 			notSureBtn.addEventListener("click", function () {
 				// If user isn't sure, we still allow them to proceed
-				localStorage.setItem("selectedDestination", "undecided");
+				localStorage.setItem("selectedDestination", "Reno, Nevada");
 
 				// In a real implementation, you would redirect to the next question page
-				window.location.href = "when.html";
+				window.location.href = "length.html";
 			});
 		</script>
 	</body>
