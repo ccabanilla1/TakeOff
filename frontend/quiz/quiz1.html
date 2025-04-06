@@ -39,7 +39,11 @@
 						<!-- Adventure Travel -->
 						<div class="style-card" data-style="adventure">
 							<div class="style-image">
-								<!-- Empty div for image area -->
+								<img
+									class="pixel-art"
+									src="../assets/adventure.jpeg"
+									alt="Pixel art of adventure"
+								/>
 							</div>
 							<div class="style-content">
 								<h3 class="style-title">Adventure Travel</h3>
@@ -54,7 +58,11 @@
 						<!-- Cultural Immersion -->
 						<div class="style-card" data-style="cultural">
 							<div class="style-image">
-								<!-- Empty div for image area -->
+								<img
+									class="pixel-art"
+									src="../assets/culture.jpeg"
+									alt="Pixel art of shrine"
+								/>
 							</div>
 							<div class="style-content">
 								<h3 class="style-title">Cultural Immersion</h3>
@@ -69,7 +77,11 @@
 						<!-- Luxury Travel -->
 						<div class="style-card" data-style="luxury">
 							<div class="style-image">
-								<!-- Empty div for image area -->
+								<img
+									class="pixel-art"
+									src="../assets/luxury.avif"
+									alt="Pixel art of crown"
+								/>
 							</div>
 							<div class="style-content">
 								<h3 class="style-title">Luxury Travel</h3>
@@ -84,7 +96,11 @@
 						<!-- Family-Friendly -->
 						<div class="style-card" data-style="family">
 							<div class="style-image">
-								<!-- Empty div for image area -->
+								<img
+									class="pixel-art"
+									src="../assets/friendly.webp"
+									alt="Pixel art of bluey"
+								/>
 							</div>
 							<div class="style-content">
 								<h3 class="style-title">Family-Friendly</h3>
@@ -99,7 +115,11 @@
 						<!-- Foodie Journeys -->
 						<div class="style-card" data-style="foodie">
 							<div class="style-image">
-								<!-- Empty div for image area -->
+								<img
+									class="pixel-art"
+									src="../assets/foodie.png"
+									alt="Pixel art of sushi"
+								/>
 							</div>
 							<div class="style-content">
 								<h3 class="style-title">Foodie Journeys</h3>
@@ -114,7 +134,11 @@
 						<!-- Relaxation & Wellness -->
 						<div class="style-card" data-style="wellness">
 							<div class="style-image">
-								<!-- Empty div for image area -->
+								<img
+									class="pixel-art"
+									src="../assets/calm.gif"
+									alt="Pixel art of calm background"
+								/>
 							</div>
 							<div class="style-content">
 								<h3 class="style-title">Relaxation & Wellness</h3>
@@ -314,10 +338,19 @@
 	}
 
 	.style-image {
-		height: 120px;
-		background-color: #10072a;
+		width: 100%;
+		height: 150px;
+		background-color: #230a5a;
+		position: relative;
+		overflow: hidden;
 	}
 
+	.pixel-art {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		image-rendering: pixelated;
+	}
 	.style-content {
 		padding: 20px;
 		background-color: #10072a;

@@ -429,83 +429,94 @@
 					const calendarPreview = document.getElementById("calendar-preview");
 					calendarPreview.innerHTML = ""; // Clear existing content
 
-					// Sort trip events by day
 					this.tripEvents.sort((a, b) => a.day - b.day);
 
-					// Generate dates for the trip
-					const dates = [];
-					const startDate = new Date(2025, 4, 6); // May 6, 2025
+					const datesMap = new Map();
+					const startDate = new Date(2025, 4, 6);
 					const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-					for (let i = 0; i < this.tripEvents.length; i++) {
-						const currentDate = new Date(startDate);
-						currentDate.setDate(startDate.getDate() + i);
-						const dayName = weekdays[currentDate.getDay()];
-						dates.push({
-							dayName: dayName,
-							formattedDate: currentDate.toLocaleDateString("en-US", {
-								month: "long",
-								day: "numeric",
-								year: "numeric",
-							}),
-						});
-					}
+					// Iterate through the sorted trip events to create unique dates
+					this.tripEvents.forEach((dayData) => {
+						const dayIndex = dayData.day;
+						if (!datesMap.has(dayIndex)) {
+							const currentDate = new Date(startDate);
+							currentDate.setDate(startDate.getDate() + dayIndex);
+							const dayName = weekdays[currentDate.getDay()];
+							datesMap.set(dayIndex, {
+								dayName: dayName,
+								formattedDate: currentDate.toLocaleDateString("en-US", {
+									month: "long",
+									day: "numeric",
+									year: "numeric",
+								}),
+							});
+						}
+					});
 
-					this.tripEvents.forEach((dayData, dayIndex) => {
+					// Iterate through the sorted trip events and render each day
+					this.tripEvents.forEach((dayData) => {
 						const dayCard = document.createElement("div");
 						dayCard.classList.add("day-card");
 
-						// Create day header
-						const dayHeader = document.createElement("div");
-						dayHeader.classList.add("day-header");
-						dayHeader.innerHTML = `
-							<span class="day-name">${dates[dayData.day].dayName},</span> 
-							<span class="day-date">${dates[dayData.day].formattedDate}</span>
-						`;
-						dayCard.appendChild(dayHeader);
+						// Get the date information from the map
+						const dateInfo = datesMap.get(dayData.day);
 
-						// Sort events by time
-						dayData.events.sort((a, b) => a.time.localeCompare(b.time));
+						if (dateInfo) {
+							// Create day header only if date info exists
+							const dayHeader = document.createElement("div");
+							dayHeader.classList.add("day-header");
+							dayHeader.innerHTML = `
+                    <span class="day-name">${dateInfo.dayName},</span>
+                    <span class="day-date">${dateInfo.formattedDate}</span>
+                `;
+							dayCard.appendChild(dayHeader);
 
-						// Render events for this day
-						dayData.events.forEach((event) => {
-							const eventCard = document.createElement("div");
-							eventCard.classList.add("event-card");
+							// Sort events by time for the current day
+							dayData.events.sort((a, b) => a.time.localeCompare(b.time));
 
-							eventCard.innerHTML = `
-								<div class="event-time-column">
-									<div class="event-time">${event.time}</div>
-									<div class="time-line"></div>
-								</div>
-								<div class="event-content">
-									<div class="event-title">${event.title}</div>
-									<div class="event-description">${event.description}</div>
-									<div class="event-actions">
-										<button class="btn-edit" data-id="${event.id}">
-											<span class="pixel-icon">✎</span> Edit
-										</button>
-										<button class="btn-delete" data-id="${event.id}">
-											<span class="pixel-icon">✕</span> Delete
-										</button>
-									</div>
-								</div>
-							`;
+							// Render events for this day
+							dayData.events.forEach((event) => {
+								const eventCard = document.createElement("div");
+								eventCard.classList.add("event-card");
 
-							// Add event listeners for edit and delete
-							const editBtn = eventCard.querySelector(".btn-edit");
-							editBtn.addEventListener("click", () =>
-								this.editEvent(event, dayIndex)
+								eventCard.innerHTML = `
+                        <div class="event-time-column">
+                            <div class="event-time">${event.time}</div>
+                            <div class="time-line"></div>
+                        </div>
+                        <div class="event-content">
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-description">${event.description}</div>
+                            <div class="event-actions">
+                                <button class="btn-edit" data-id="${event.id}">
+                                    <span class="pixel-icon">✎</span> Edit
+                                </button>
+                                <button class="btn-delete" data-id="${event.id}">
+                                    <span class="pixel-icon">✕</span> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+								const editBtn = eventCard.querySelector(".btn-edit");
+								editBtn.addEventListener("click", () =>
+									this.editEvent(event, dayData.day)
+								);
+
+								const deleteBtn = eventCard.querySelector(".btn-delete");
+								deleteBtn.addEventListener("click", () =>
+									this.deleteEvent(event, dayData.day)
+								);
+
+								dayCard.appendChild(eventCard);
+							});
+
+							calendarPreview.appendChild(dayCard);
+						} else {
+							console.error(
+								`No date information found for day: ${dayData.day}`
 							);
-
-							const deleteBtn = eventCard.querySelector(".btn-delete");
-							deleteBtn.addEventListener("click", () =>
-								this.deleteEvent(event, dayIndex)
-							);
-
-							dayCard.appendChild(eventCard);
-						});
-
-						calendarPreview.appendChild(dayCard);
+						}
 					});
 				}
 
