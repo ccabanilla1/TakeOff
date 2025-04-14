@@ -10,7 +10,9 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Parse JSON request bodies
-app.use(express.static(path.join(__dirname, "frontend"))); // Serve static files from frontend directory
+
+// Serve static files from frontend directory
+app.use(express.static(path.join(__dirname, "frontend")));
 
 // Root route to serve the main HTML file
 app.get("/", (req, res) => {
@@ -80,6 +82,11 @@ app.post("/api/generate-itinerary", async (req, res) => {
 		);
 		res.status(500).json({ error: "Failed to generate itinerary" });
 	}
+});
+
+// Handle 404 errors
+app.use((req, res) => {
+	res.status(404).sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
 // Start server
