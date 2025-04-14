@@ -441,3 +441,39 @@ h1 {
 		}
 	}
 }
+
+.error-message {
+	background-color: rgba(255, 0, 0, 0.1);
+	border: 2px solid #ff4444;
+	padding: 20px;
+	margin: 20px 0;
+	border-radius: 8px;
+	text-align: center;
+}
+
+.error-message h2 {
+	color: #ff4444;
+	margin-bottom: 10px;
+	font-family: "Press Start 2P", cursive;
+	font-size: 18px;
+}
+
+.error-message p {
+	color: #fff;
+	margin-bottom: 15px;
+}
+
+.error-message button {
+	background-color: #ff4444;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-family: "Press Start 2P", cursive;
+	font-size: 12px;
+}
+
+.error-message button:hover {
+	background-color: #ff6666;
+}

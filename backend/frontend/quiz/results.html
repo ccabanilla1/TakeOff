@@ -10,6 +10,7 @@
 		/>
 		<link rel="stylesheet" href="../css/styles.css" />
 		<script src="../navbar.js" defer></script>
+		<script src="../js/api.js"></script>
 	</head>
 	<body>
 		<div class="grid-container">
@@ -122,30 +123,16 @@
 						document.getElementById("loading-container").style.display = "flex";
 						document.getElementById("calendar-preview").style.display = "none";
 
-						// Make API call to your backend
-						const response = await fetch(
-							"http://localhost:3000/api/generate-itinerary",
-							{
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify({
-									destination: this.quizData.destination,
-									timeframe: this.quizData.timeframe,
-									companion: this.quizData.companion,
-									styles: this.quizData.styles,
-									budget: this.quizData.budget,
-									duration: this.quizData.duration,
-								}),
-							}
-						);
+						// Use our API module to generate the itinerary
+						const data = await API.generateItinerary({
+							destination: this.quizData.destination,
+							timeframe: this.quizData.timeframe,
+							companion: this.quizData.companion,
+							styles: this.quizData.styles,
+							budget: this.quizData.budget,
+							duration: this.quizData.duration,
+						});
 
-						if (!response.ok) {
-							throw new Error("Failed to generate itinerary");
-						}
-
-						const data = await response.json();
 						this.tripEvents = data.days;
 
 						// Hide loading and show itinerary
@@ -156,9 +143,22 @@
 						this.renderCalendar();
 					} catch (error) {
 						console.error("Error generating itinerary:", error);
-						alert(
-							"There was an error generating your itinerary. Please try again."
-						);
+						document.getElementById("loading-container").style.display = "none";
+
+						// Show error message to user
+						const errorMessage = document.createElement("div");
+						errorMessage.className = "error-message";
+						errorMessage.innerHTML = `
+							<h2>Oops! Something went wrong</h2>
+							<p>We couldn't generate your itinerary at the moment. Don't worry, we'll show you a sample itinerary instead.</p>
+							<button onclick="this.parentElement.remove()">Dismiss</button>
+						`;
+						document
+							.querySelector(".content")
+							.insertBefore(
+								errorMessage,
+								document.getElementById("calendar-preview")
+							);
 
 						// Show mock data as fallback
 						this.generateMockItinerary();

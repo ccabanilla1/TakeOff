@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const path = require("path");
 require("dotenv").config(); // For loading API key from .env file
 
 const app = express();
@@ -9,6 +10,12 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Parse JSON request bodies
+app.use(express.static(path.join(__dirname, "frontend"))); // Serve static files from frontend directory
+
+// Root route to serve the main HTML file
+app.get("/", (req, res) => {
+	res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
 
 // Route for generating itineraries
 app.post("/api/generate-itinerary", async (req, res) => {

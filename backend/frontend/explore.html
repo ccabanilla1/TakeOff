@@ -10,6 +10,7 @@
 		/>
 		<link rel="stylesheet" href="css/styles.css" />
 		<script src="navbar.js"></script>
+		<script src="js/api.js"></script>
 	</head>
 	<body>
 		<div class="grid-container">
@@ -188,7 +189,7 @@
 		<script>
 			// Destination card click handlers
 			document.querySelectorAll(".explore-btn").forEach((button) => {
-				button.addEventListener("click", function () {
+				button.addEventListener("click", async function () {
 					const destination = this.innerText
 						.replace("Explore ", "")
 						.replace(" →", "");
